@@ -743,6 +743,7 @@ GameObject:
   - component: {fileID: 1905650915}
   - component: {fileID: 1905650917}
   - component: {fileID: 1905650918}
+  - component: {fileID: 1905650919}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -762,10 +763,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Zenject::Zenject.SceneContext
-  _scriptableObjectInstallers: []
+  _scriptableObjectInstallers:
+  - {fileID: 11400000, guid: f8020b01f368a4e5393db960fc983c6e, type: 2}
   _monoInstallers:
   - {fileID: 1905650917}
   - {fileID: 1905650918}
+  - {fileID: 1905650919}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -811,7 +814,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnInstaller
   _playerSpawnPoint: {fileID: 1929513417}
-  _playerPrefab: {fileID: 4951567742857956682, guid: 867a6a8fe1e96154b9183edc012450af, type: 3}
 --- !u!114 &1905650918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -825,7 +827,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSpawnInstaller
   _levelSpawnPointsHolder: {fileID: 766947615}
-  _levelPreset: {fileID: 11400000, guid: daf04da6f988c39499ab161895f532f7, type: 2}
+--- !u!114 &1905650919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1905650914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ce05fe13e4b4b998ffb9c382eedd2b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DefaultNamespace.Installers.WorldInstaller
 --- !u!1 &1929513416
 GameObject:
   m_ObjectHideFlags: 0

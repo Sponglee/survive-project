@@ -1,3 +1,6 @@
-﻿internal interface ITile 
+﻿using UnityEngine;
+
+public interface ITile
 {
+    public Transform Transform { get; }
 }
