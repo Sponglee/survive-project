@@ -5,7 +5,7 @@ using Zenject;
 [CreateAssetMenu(fileName = "LevelDataInstaller", menuName = "Scriptable Objects/LevelDataInstaller")]
 public class LevelDataInstaller : ScriptableObjectInstaller
 {
-    [FormerlySerializedAs("LevelPreset")] public WorldPreset _worldPreset;
+    public WorldPreset _worldPreset;
     public PlayerPreset PlayerPreset;
     
     public override void InstallBindings()

@@ -9,6 +9,8 @@ public class WorldPreset : ScriptableObject
     public GameObject[] TileList;
     [TextArea(20,20)]
     public string Map;
+    [TextArea(20,20)]
+    public string MapContent;
 
     [HideInInspector]
     public ValuePair<int, int> LevelSize => GetMapSize();

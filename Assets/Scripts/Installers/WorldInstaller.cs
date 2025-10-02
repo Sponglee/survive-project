@@ -12,6 +12,11 @@ namespace DefaultNamespace.Installers
             Container.Bind<ITileFactory>()
                 .To<WorldTileFactory>()
                 .AsSingle();
+            
+            Container.Bind<TileInputService>().AsSingle().NonLazy();
+
+            Container.Bind<TileOutlineService>().AsSingle().NonLazy();
+
         }
     }
 }

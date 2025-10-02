@@ -10,7 +10,10 @@ public class WorldGenerator : IInitializable
     private TileManager _tileManager;
 
     [Inject]
-    public void Construct(ITileFactory tileFactory, WorldPreset worldPreset, TileManager tileManager,
+    public void Construct(
+        ITileFactory tileFactory, 
+        WorldPreset worldPreset, 
+        TileManager tileManager,
         [Inject(Id = "WorldSpawn")] Transform worldHolder)
     {
         _tileFactory = tileFactory;
@@ -22,8 +25,14 @@ public class WorldGenerator : IInitializable
     public void Initialize()
     {
         GenerateLevel();
+        GenerateObjects();
     }
 
+    public void GenerateObjects()
+    {
+        
+    }
+    
     public void GenerateLevel()
     {
         var levelSize = _worldPreset.LevelSize;
