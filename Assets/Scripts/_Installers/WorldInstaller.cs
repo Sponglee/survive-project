@@ -13,7 +13,8 @@ namespace DefaultNamespace.Installers
                 .To<WorldTileFactory>()
                 .AsSingle();
             
-            Container.Bind<TileInputService>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<TileInputService>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<TileInputProvider>().AsSingle().NonLazy();
 
             Container.Bind<TileOutlineService>().AsSingle().NonLazy();
 

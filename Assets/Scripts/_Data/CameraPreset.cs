@@ -1,8 +1,8 @@
 using DG.Tweening;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CameraSettingsPreset", menuName = "Scriptable Objects/CameraSettingsPreset")]
-public class CameraSettingsPreset : ScriptableObject
+[CreateAssetMenu(fileName = "CameraPreset", menuName = "Scriptable Objects/CameraPreset")]
+public class CameraPreset : ScriptableObject
 {
     public float CameraMoveSpeed = .25f;
     public float CameraPanSpeed = .15f;

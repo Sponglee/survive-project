@@ -5,7 +5,7 @@ using Zenject;
 
 namespace DefaultNamespace
 {
-    public class CameraInputService : IInputService, IInitializable, ITickable, IDisposable
+    public class CameraInputService : IInitializable, ITickable, IDisposable
     {
         public Vector2 CameraMoveInput { get; private set; }
         public Vector2 CameraPanInput { get; private set; }

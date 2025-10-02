@@ -7,8 +7,11 @@ namespace DefaultNamespace
 {
     public class CameraManager
     {
-        private CameraSettingsPreset _cameraSettingsPreset;
+        public Camera MainCamera => _mainCamera ??= _camera.GetComponent<Camera>(); 
         
+        private CameraPreset _cameraSettingsPreset;
+
+        private Camera _mainCamera;
         private CinemachineCamera _camera;
         private CinemachineOrbitalFollow _orbitalFollow;
         private Transform _cameraPivot;
@@ -18,7 +21,7 @@ namespace DefaultNamespace
         [Inject]
         public CameraManager(
             CinemachineCamera camera,
-            CameraSettingsPreset cameraSettings,
+            CameraPreset cameraSettings,
             [Inject(Id = "CameraPivot")] Transform cameraPivot)
         {
             _cameraPivot = cameraPivot;

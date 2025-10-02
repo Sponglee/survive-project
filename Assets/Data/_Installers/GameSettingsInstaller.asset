@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7d5eac51f4244869be62e9cce93ed0c, type: 3}
-  m_Name: SettingsInstaller
+  m_Name: GameSettingsInstaller
   m_EditorClassIdentifier: Assembly-CSharp::SettingsInstaller
   _cameraSettingsPreset: {fileID: 11400000, guid: 569e575a97df64d0bba9bc3762f830d5, type: 2}
+  _audioSettings: {fileID: 11400000, guid: d76b330e988204826a04f5895e077056, type: 2}
