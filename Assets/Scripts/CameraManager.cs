@@ -7,13 +7,7 @@ namespace DefaultNamespace
 {
     public class CameraManager
     {
-        private const float CAMERA_MOVE_SPEED = .25f;
-        private const float CAMERA_PAN_SPEED = .15f;
-        private const float CAMERA_ROTATE_SPEED = 1f;
-        private const float CAMERA_ZOOM_SPEED = .05f;
-
-        private const Ease CAMERA_LOOKAT_EASE = Ease.OutCubic;
-        private const float CAMERA_LOOKAT_DURATION = 1f;
+        private CameraSettingsPreset _cameraSettingsPreset;
         
         private CinemachineCamera _camera;
         private CinemachineOrbitalFollow _orbitalFollow;
@@ -24,9 +18,11 @@ namespace DefaultNamespace
         [Inject]
         public CameraManager(
             CinemachineCamera camera,
+            CameraSettingsPreset cameraSettings,
             [Inject(Id = "CameraPivot")] Transform cameraPivot)
         {
             _cameraPivot = cameraPivot;
+            _cameraSettingsPreset = cameraSettings;
             _camera = camera;
             _orbitalFollow = _camera.GetComponent<CinemachineOrbitalFollow>();
         }
@@ -36,7 +32,7 @@ namespace DefaultNamespace
         {
             ChangeState(CameraState.Cinematic);
             var lookAtPos = Vector3.Scale(new Vector3(1,0,1),objTransform.position);
-            _cameraPivot.DOMove(lookAtPos, CAMERA_LOOKAT_DURATION).SetEase(CAMERA_LOOKAT_EASE).OnComplete(()=>ChangeState(CameraState.LookAt));
+            _cameraPivot.DOMove(lookAtPos, _cameraSettingsPreset.CameraLookAtDuration).SetEase(_cameraSettingsPreset.CameraLookAtEase).OnComplete(()=>ChangeState(CameraState.LookAt));
         }
 
         private void ChangeState(CameraState targetState)
@@ -51,23 +47,23 @@ namespace DefaultNamespace
         
         public void Move(Vector2 move)
         {
-           MoveCamera(move, CAMERA_MOVE_SPEED);
+           MoveCamera(move, _cameraSettingsPreset.CameraMoveSpeed);
         }
         
         public void Pan(Vector2 move)
         {
-            MoveCamera(move, CAMERA_PAN_SPEED);
+            MoveCamera(move, _cameraSettingsPreset.CameraPanSpeed);
         }
 
         public void Rotate(float input)
         {
-            _orbitalFollow.HorizontalAxis.Value += input * CAMERA_ROTATE_SPEED;
+            _orbitalFollow.HorizontalAxis.Value += input * _cameraSettingsPreset.CameraRotateSpeed;
             _orbitalFollow.HorizontalAxis.Validate();
         }
         
         public void Zoom(float zoom)
         {
-            _orbitalFollow.RadialAxis.Value -= zoom * CAMERA_ZOOM_SPEED;
+            _orbitalFollow.RadialAxis.Value -= zoom * _cameraSettingsPreset.CameraZoomSpeed;
             _orbitalFollow.RadialAxis.Validate();
         }
         
