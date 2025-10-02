@@ -1,5 +1,4 @@
 using System;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 using Zenject;
 
@@ -8,6 +7,7 @@ namespace DefaultNamespace
     public class CameraInputProvider : IInitializable, IDisposable
     {
 
+        
         private TileInputService _tileInputService;
         private CameraInputService _cameraInputService;
         private CameraManager _cameraManager;
@@ -27,16 +27,21 @@ namespace DefaultNamespace
         public void Initialize()
         {
             _tileInputService.OnTileClicked += TileClickedHandler;
-            _cameraInputService.OnCameraRotate += RotateCamera;
             _cameraInputService.OnCameraMove += MoveCamera;
+            _cameraInputService.OnCameraPan += PanCamera;
+            _cameraInputService.OnCameraRotate += RotateCamera;
+            _cameraInputService.OnCameraZoom += ZoomCamera;
+
         }
 
 
         public void Dispose()
         {
             _tileInputService.OnTileClicked -= TileClickedHandler;
-            _cameraInputService.OnCameraRotate -= RotateCamera;
             _cameraInputService.OnCameraMove -= MoveCamera;
+            _cameraInputService.OnCameraPan -= PanCamera;
+            _cameraInputService.OnCameraRotate -= RotateCamera;
+            _cameraInputService.OnCameraZoom -= ZoomCamera;
         }
 
         private void TileClickedHandler(WorldTile obj)
@@ -46,14 +51,24 @@ namespace DefaultNamespace
             _cameraManager.LookAt(objectTransform);
         }
 
+        private void MoveCamera(Vector2 move)
+        {
+            _cameraManager.Move(move);
+        }
+        
+        private void PanCamera(Vector2 move)
+        {
+            _cameraManager.Pan(move);
+        }
+        
         private void RotateCamera(float input)
         {
             _cameraManager.Rotate(input);
         }
-
-        private void MoveCamera(Vector2 move)
+        
+        private void ZoomCamera(float zoom)
         {
-            _cameraManager.Move(move);
+            _cameraManager.Zoom(zoom);
         }
     }
 }

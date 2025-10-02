@@ -497,6 +497,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "CameraZoom",
+                    "type": "Value",
+                    "id": "68305cbb-ee03-4ab4-bf8a-4d7b40b6b3a2",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "CameraPan",
+                    "type": "Value",
+                    "id": "1481396f-fce0-421d-b262-7cb4a286028d",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -635,7 +653,7 @@
                 {
                     "name": "One Modifier",
                     "id": "260a7afe-8641-49a6-9ad5-5e0d15eca252",
-                    "path": "OneModifier",
+                    "path": "OneModifier(overrideModifiersNeedToBePressedFirst=true)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -662,6 +680,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "CameraRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "4992aa2a-422e-4440-bcab-12061fd361c0",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "2e11f00a-5ff3-4583-ae74-23e383c34e3d",
+                    "path": "OneModifier(overrideModifiersNeedToBePressedFirst=true)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraPan",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "3867e3a6-3165-4437-a42d-372522b43921",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraPan",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "1b596d94-d365-465a-8bfb-c43cf7ebb213",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraPan",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }
