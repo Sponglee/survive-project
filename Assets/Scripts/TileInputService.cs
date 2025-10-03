@@ -3,42 +3,50 @@ using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using Zenject;
 
-public class TileInputService : ITickable
+public class TileInputService 
 {
     public event Action<WorldTile> OnTileClicked;
     
     private WorldTile _currentSelectedTile = null;
     private InputAction _clickAction;
+    
     private Camera _camera;
-
     private LayerMask _raycastLayerMask;
-    public TileInputService(CameraManager cameraManager, InputActionAsset inputActions)
+
+    public TileInputService(
+        InputActionAsset inputActions,
+        CameraManager cameraManager)
     {
-        _camera = cameraManager.MainCamera;
         var map = inputActions.FindActionMap("Map");
         _clickAction = map.FindAction("MouseClick");
         _raycastLayerMask = 1 << LayerMask.NameToLayer("WorldTiles");
+        _camera = cameraManager.MainCamera;
     }
-    
-    public void Tick()
+
+    public void RaycastSelect()
     {
-        if (_clickAction.WasPressedThisFrame())
+        if (!_clickAction.WasPressedThisFrame())
         {
-            if (EventSystem.current.IsPointerOverGameObject())
-                return;
+            return;
+        }
+
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
             
-            var mousePos = Mouse.current.position.ReadValue();
-            var ray = _camera.ScreenPointToRay(mousePos);
+        var mousePos = Mouse.current.position.ReadValue();
+        var ray = _camera.ScreenPointToRay(mousePos);
+
+        if (!Physics.Raycast(ray, out RaycastHit hit, 100f, _raycastLayerMask))
+        {
+            return;
+        }
             
-            if (Physics.Raycast(ray, out RaycastHit hit,100f, _raycastLayerMask))
-            {
-                if (hit.collider.TryGetComponent<WorldTile>(out var tile))
-                {
-                    NotifyTileClicked(tile);
-                }
-            }
+        if (hit.collider.TryGetComponent<WorldTile>(out var tile))
+        {
+            NotifyTileClicked(tile);
         }
     }
     

@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -15,9 +16,11 @@ namespace DefaultNamespace
         private CinemachineCamera _camera;
         private CinemachineOrbitalFollow _orbitalFollow;
         private Transform _cameraPivot;
+        private Tween _moveCameraTween;
         
         private CameraState _cameraState;
-
+        public event Action<CameraState> CameraStateChanged; 
+        
         [Inject]
         public CameraManager(
             CinemachineCamera camera,
@@ -33,9 +36,12 @@ namespace DefaultNamespace
 
         public void LookAt(Transform objTransform)
         {
+            _moveCameraTween?.Kill();
+            _moveCameraTween = null;
+            
             ChangeState(CameraState.Cinematic);
             var lookAtPos = Vector3.Scale(new Vector3(1,0,1),objTransform.position);
-            _cameraPivot.DOMove(lookAtPos, _cameraSettingsPreset.CameraLookAtDuration).SetEase(_cameraSettingsPreset.CameraLookAtEase).OnComplete(()=>ChangeState(CameraState.LookAt));
+            _moveCameraTween = _cameraPivot.DOMove(lookAtPos, _cameraSettingsPreset.CameraLookAtDuration).SetEase(_cameraSettingsPreset.CameraLookAtEase).OnComplete(()=>ChangeState(CameraState.LookAt));
         }
 
         private void ChangeState(CameraState targetState)
@@ -46,6 +52,7 @@ namespace DefaultNamespace
             }
             
             _cameraState = targetState;
+            CameraStateChanged?.Invoke(_cameraState);
         }
         
         public void Move(Vector2 move)
@@ -72,20 +79,21 @@ namespace DefaultNamespace
         
         private void MoveCamera(Vector2 move, float speedOverride)
         {
-            if (_cameraState == CameraState.Cinematic)
-            {
-                return;
-            }
-
+            ChangeState(CameraState.Idle);
+            
+            _moveCameraTween?.Kill();
+            _moveCameraTween = null;
+            
             var moveDirection = Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0)
                                 * new Vector3(move.x, 0, move.y) * _orbitalFollow.RadialAxis.Value;
             _cameraPivot.Translate(moveDirection * speedOverride);
         }
     }
 
-    internal enum CameraState
+    public enum CameraState
     {
         LookAt,
-        Cinematic
+        Cinematic,
+        Idle
     }
 }

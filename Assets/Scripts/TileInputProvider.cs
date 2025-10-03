@@ -1,13 +1,18 @@
 using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using Zenject;
 
 
 namespace DefaultNamespace
 {
-    public class TileInputProvider : IInitializable, IDisposable
+    public class TileInputProvider : IInitializable, ITickable, IDisposable
     {
         private TileInputService _tileInputService;
         private CameraManager _cameraManager;
+
+        private bool _canSelectTile = true;
         
         public TileInputProvider(
             TileInputService tileInputService,
@@ -26,6 +31,16 @@ namespace DefaultNamespace
         public void Dispose()
         {
             _tileInputService.OnTileClicked -= TileClickedHandler;
+        }
+        
+        public void Tick()
+        {
+            if (!_canSelectTile)
+            {
+                return;
+            }
+            
+            _tileInputService.RaycastSelect();
         }
         
         private void TileClickedHandler(WorldTile obj)

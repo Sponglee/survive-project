@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CameraSettingsPreset
   m_EditorClassIdentifier: Assembly-CSharp::CameraSettingsPreset
   CameraMoveSpeed: 0.25
-  CameraPanSpeed: 0.15
-  CameraRotateSpeed: 1
+  CameraPanSpeed: 0.05
+  CameraRotateSpeed: 0.5
   CameraZoomSpeed: 0.05
   CameraLookAtEase: 9
   CameraLookAtDuration: 1
