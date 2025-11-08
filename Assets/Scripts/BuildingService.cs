@@ -62,7 +62,7 @@ public class BuildingService : IDisposable, IInitializable
         var buildingView = _buildingFactory.Create(_selectedBuilding.Prefab);
         var buildingController = new BuildingController(buildingView, buildingModel);
         buildingView.transform.SetParent(tile.BuildingHolder);
-        buildingView.transform.position = tile.MapContentHolder.position;
+        buildingView.transform.position = tile.BuildingHolder.position;
         tile.SetBuilding(buildingController);
 
         _isBuildingSelected = false;
