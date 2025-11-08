@@ -1,4 +1,4 @@
-using DefaultNamespace;
+using SurviveProject;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -13,6 +13,11 @@ public class InputSystemInstaller : MonoInstaller<InputSystemInstaller>
             .FromInstance(_inputAsset)
             .AsSingle();
 
+        Container.BindInterfacesAndSelfTo<CameraInputProvider>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<CameraInputService>().AsSingle().NonLazy();
+
+        Container.BindInterfacesAndSelfTo<PlayerInputProvider>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<PlayerInputService>().AsSingle().NonLazy();
+
     }
 }

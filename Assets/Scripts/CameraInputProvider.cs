@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public class CameraInputProvider : IInitializable, IDisposable
     {

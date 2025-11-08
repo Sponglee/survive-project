@@ -1,22 +1,23 @@
 using UnityEngine;
 using Zenject;
 
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public class WorldTileFactory : ITileFactory
     {
         private readonly DiContainer _container;
-    
-        public WorldTileFactory(DiContainer container)
+        private TileManager _tileManager;
+        
+        public WorldTileFactory(
+            DiContainer container)
         {
             _container = container;
         }
   
-        public ITile Create(GameObject prefab, Vector3 position)
+        public WorldTileView Create(GameObject prefab)
         {
-            var tile = _container.InstantiatePrefabForComponent<WorldTile>(prefab);
-            tile.transform.position = position;
-            return tile;
+            var tileView = _container.InstantiatePrefabForComponent<WorldTileView>(prefab);
+            return tileView;
         }
     }
 

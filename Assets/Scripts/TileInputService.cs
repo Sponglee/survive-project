@@ -1,27 +1,35 @@
 using System;
-using DefaultNamespace;
+using SurviveProject;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class TileInputService 
+public class TileInputService : IDisposable
 {
-    public event Action<WorldTile> OnTileClicked;
+    public event Action<WorldTileView> OnTileClicked;
     
-    private WorldTile _currentSelectedTile = null;
-    private InputAction _clickAction;
+    private WorldTileView _currentSelectedTileView = null;
+    private readonly InputAction _clickAction;
     
-    private Camera _camera;
-    private LayerMask _raycastLayerMask;
+    private readonly Camera _camera;
+    private readonly LayerMask _rayCastLayerMask;
 
     public TileInputService(
         InputActionAsset inputActions,
         CameraManager cameraManager)
     {
         var map = inputActions.FindActionMap("Map");
+        map.Enable(); 
         _clickAction = map.FindAction("MouseClick");
-        _raycastLayerMask = 1 << LayerMask.NameToLayer("WorldTiles");
+        _clickAction.Enable();
+        
+        _rayCastLayerMask = 1 << LayerMask.NameToLayer("WorldTiles");
         _camera = cameraManager.MainCamera;
+    }
+    
+    public void Dispose()
+    {
+        _clickAction?.Disable();
     }
 
     public void RaycastSelect()
@@ -31,7 +39,12 @@ public class TileInputService
             return;
         }
 
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+        
+        if (Mouse.current == null)
         {
             return;
         }
@@ -39,26 +52,28 @@ public class TileInputService
         var mousePos = Mouse.current.position.ReadValue();
         var ray = _camera.ScreenPointToRay(mousePos);
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, 100f, _raycastLayerMask))
+        if (!Physics.Raycast(ray, out RaycastHit hit, 100f, _rayCastLayerMask))
         {
             return;
         }
             
-        if (hit.collider.TryGetComponent<WorldTile>(out var tile))
+        if (hit.collider.TryGetComponent(out WorldTileView tile))
         {
             NotifyTileClicked(tile);
         }
     }
     
-    private void NotifyTileClicked(WorldTile tile)
+    private void NotifyTileClicked(WorldTileView tileView)
     {
-        var tileToSelect = tile;
-        if (_currentSelectedTile == tile)
+        if (_currentSelectedTileView == tileView)
         {
-            _currentSelectedTile = null;
-            tileToSelect = null;
+            _currentSelectedTileView = null;
+            OnTileClicked?.Invoke(null);
         }
-        _currentSelectedTile = tileToSelect;
-        OnTileClicked?.Invoke(tileToSelect);
+        else
+        {
+            _currentSelectedTileView = tileView;
+            OnTileClicked?.Invoke(tileView);
+        }
     }
 }

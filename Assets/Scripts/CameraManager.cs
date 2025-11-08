@@ -4,7 +4,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using Zenject;
 
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public class CameraManager
     {

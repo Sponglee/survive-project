@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c5c56853c7434206931c774b6f29eb0, type: 3}
   m_Name: Level_test_Installer
   m_EditorClassIdentifier: Assembly-CSharp::LevelDataInstaller
-  _worldPreset: {fileID: 11400000, guid: daf04da6f988c39499ab161895f532f7, type: 2}
+  WorldPreset: {fileID: 11400000, guid: daf04da6f988c39499ab161895f532f7, type: 2}
   PlayerPreset: {fileID: 11400000, guid: e89b0fdde9ce84ceba65bce41764cca3, type: 2}
+  mapContentPreset: {fileID: 11400000, guid: f53742a34e21ec646bb754fdb5ebba5e, type: 2}
+  BuildingsPreset: {fileID: 11400000, guid: 2b6674b8cabef6343baa5fe7ad0ef6d1, type: 2}

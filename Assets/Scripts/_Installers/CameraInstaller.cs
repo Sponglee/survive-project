@@ -1,4 +1,4 @@
-using DefaultNamespace;
+using SurviveProject;
 using Unity.Cinemachine;
 using UnityEngine;
 using Zenject;
@@ -13,7 +13,5 @@ public class CameraInstaller : MonoInstaller
         Container.BindInstance(_cameraPivot).WithId("CameraPivot");
 
         Container.Bind<CameraManager>().AsSingle().WithArguments(_camera, _cameraPivot).NonLazy();
-
-        Container.BindInterfacesAndSelfTo<CameraInputProvider>().AsSingle().NonLazy();
     }
 }

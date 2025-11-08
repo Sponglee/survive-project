@@ -1,9 +1,9 @@
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public interface ITileFactory
     {
-        ITile Create(GameObject prefab, Vector3 position);
+        WorldTileView Create(GameObject prefab);
     }
 }

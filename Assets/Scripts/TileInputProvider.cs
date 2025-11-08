@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using Zenject;
 
 
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public class TileInputProvider : IInitializable, ITickable, IDisposable
     {
@@ -43,7 +43,7 @@ namespace DefaultNamespace
             _tileInputService.RaycastSelect();
         }
         
-        private void TileClickedHandler(WorldTile obj)
+        private void TileClickedHandler(WorldTileView obj)
         {
             if(obj == null) return;
             var objectTransform = obj.transform;

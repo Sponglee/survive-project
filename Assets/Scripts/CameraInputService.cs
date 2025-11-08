@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public class CameraInputService : IInitializable, ITickable, IDisposable
     {

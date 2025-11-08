@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68981b19c9733f04ca4a0270a51084f8, type: 3}
+  m_Name: MapContentPreset
+  m_EditorClassIdentifier: Assembly-CSharp::WorldObjectsPreset
+  MapContentList:
+  - Type: 0
+    Prefab: {fileID: 1159172964186833925, guid: 80632c776e345a24bbb477675a858d88, type: 3}

@@ -1,4 +1,4 @@
-namespace DefaultNamespace
+namespace SurviveProject
 {
     public class TileOutlineService
     {
