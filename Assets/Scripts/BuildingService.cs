@@ -17,7 +17,8 @@ public class BuildingService : IDisposable, IInitializable
     private LayerMask _raycastLayerMask;
 
     private bool _isBuildingSelected = false;
-    private BuildingData _selectedBuilding;
+    private BuildingController _selectedBuilding;
+
     
     public BuildingService(
         TileInputService tileInputService,
@@ -31,20 +32,42 @@ public class BuildingService : IDisposable, IInitializable
 
     public void Initialize()
     {
+        _tileInputService.OnTileHover += TileHoverHandler;
         _tileInputService.OnTileClicked += TileClickHandler;
     }
 
     public void Dispose()
     {
+        _tileInputService.OnTileHover -= TileHoverHandler;
         _tileInputService.OnTileClicked -= TileClickHandler;
         _currentSelectedTileView?.Dispose();
         _clickAction?.Dispose();
     }
 
-    public void SelectBuilding(BuildingData targetBuilding)
+    public void SelectBuilding(BuildingData targetBuildingData)
     {
-        _selectedBuilding = targetBuilding;
-        _isBuildingSelected = targetBuilding != null;
+        _isBuildingSelected = targetBuildingData != null;
+        
+        if (targetBuildingData == null)
+        {
+            return;
+        }
+        
+
+        var buildingModel = new BuildingModel(targetBuildingData);
+        var buildingView = _buildingFactory.Create(targetBuildingData.Prefab);
+        _selectedBuilding = new BuildingController(buildingView, buildingModel);
+        _selectedBuilding.View.transform.position = new Vector3(0,-100,0);
+    }
+
+    private void TileHoverHandler(WorldTileView tile)
+    {
+        if (!_isBuildingSelected)
+        {
+            return;
+        }
+        
+        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
     }
     
     private void TileClickHandler(WorldTileView obj)
@@ -53,18 +76,13 @@ public class BuildingService : IDisposable, IInitializable
         {
             return;
         }
-        Debug.Log($"BUILT {_selectedBuilding}");
+                
         var tile = _tileManager.GetTileByView(obj);
-
-        var data = _selectedBuilding;
-
-        var buildingModel = new BuildingModel(data);
-        var buildingView = _buildingFactory.Create(_selectedBuilding.Prefab);
-        var buildingController = new BuildingController(buildingView, buildingModel);
-        buildingView.transform.SetParent(tile.BuildingHolder);
-        buildingView.transform.position = tile.BuildingHolder.position;
-        tile.SetBuilding(buildingController);
-
+        _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
+        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
+        tile.SetBuilding(_selectedBuilding);
+        tile.SetState(TileState.Occupied);
+        
         _isBuildingSelected = false;
         _selectedBuilding = null;
     }

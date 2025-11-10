@@ -15,13 +15,6 @@ public class TileManager
         ActiveTiles.Add(id, tile);
     }
 
-    public void SetTileState(ITile tile, IMapContent obj)
-    {
-        var contentType = obj.MapContentType;
-        var state = GetTileDataFromMapContent(contentType);
-        tile.SetState(state);
-    }
-
     private TileState GetTileDataFromMapContent(MapContentType objectDataType)
     {
         var tileState = objectDataType switch

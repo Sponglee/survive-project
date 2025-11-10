@@ -9,17 +9,20 @@ namespace SurviveProject
 {
     public class TileInputProvider : IInitializable, ITickable, IDisposable
     {
-        private TileInputService _tileInputService;
-        private CameraManager _cameraManager;
+        private readonly TileManager _tileManager;
+        private readonly TileInputService _tileInputService;
+        private readonly CameraManager _cameraManager;
 
         private bool _canSelectTile = true;
-        
+
         public TileInputProvider(
             TileInputService tileInputService,
+            TileManager tileManager,
             CameraManager cameraManager)
 
         {
             _tileInputService = tileInputService;
+            _tileManager = tileManager;
             _cameraManager = cameraManager;
         }
         
@@ -46,8 +49,15 @@ namespace SurviveProject
         private void TileClickedHandler(WorldTileView obj)
         {
             if(obj == null) return;
-            var objectTransform = obj.transform;
-            _cameraManager.LookAt(objectTransform);
+
+            var tile = _tileManager.GetTileByView(obj);
+
+            if (tile.IsEmpty)
+            {
+                return;
+            }
+            
+            _cameraManager.LookAt(obj.transform);
         }
     }
 }

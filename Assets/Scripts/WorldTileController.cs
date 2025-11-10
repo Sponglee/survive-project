@@ -5,18 +5,18 @@ namespace SurviveProject
 {
     public class WorldTileController : ITile, IDisposable
     {
-        private WorldTileModel _model;
-        private WorldTileView _view;
+        private readonly WorldTileModel _model;
+        private readonly WorldTileView _view;
         
-        private TileManager _tileManager;
-        private TileInputService _inputService;
+        private readonly TileManager _tileManager;
+        private readonly TileInputService _inputService;
 
-        public Transform Transform => _view.transform;
+        public MapContentType MapContentType => _model.MapContent.MapContentType;
+
         public Transform MapContentHolder => _view.ContentHolder;
         public Transform BuildingHolder => _view.BuildingHolder;
-        
         public TileState TileState => _model.TileState;
-        public MapContentType MapContentType => _model.MapContent.MapContentType;
+        public bool IsEmpty => TileState == TileState.Free;
 
         public WorldTileController(
             WorldTileModel model, 

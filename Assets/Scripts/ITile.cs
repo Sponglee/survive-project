@@ -3,11 +3,12 @@ using UnityEngine;
 
 public interface ITile
 {
-    public Transform MapContentHolder { get; }
-    public Transform BuildingHolder { get; }
-
-    public TileState TileState { get; }
-    public void SetState(TileState state);
+    Transform MapContentHolder { get; }
+    Transform BuildingHolder { get; }
+    TileState TileState { get; }
+    bool IsEmpty { get; }
+    
+    void SetState(TileState state);
     void SetContent(IMapContent mapContent);
     void SetBuilding(BuildingController buildingController);
 }

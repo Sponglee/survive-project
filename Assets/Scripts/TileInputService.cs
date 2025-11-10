@@ -7,7 +7,8 @@ using UnityEngine.InputSystem;
 public class TileInputService : IDisposable
 {
     public event Action<WorldTileView> OnTileClicked;
-    
+    public event Action<WorldTileView> OnTileHover;
+
     private WorldTileView _currentSelectedTileView = null;
     private readonly InputAction _clickAction;
     
@@ -34,11 +35,6 @@ public class TileInputService : IDisposable
 
     public void RaycastSelect()
     {
-        if (!_clickAction.WasPressedThisFrame())
-        {
-            return;
-        }
-
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             return;
@@ -57,12 +53,26 @@ public class TileInputService : IDisposable
             return;
         }
             
-        if (hit.collider.TryGetComponent(out WorldTileView tile))
+        if (!hit.collider.TryGetComponent(out WorldTileView tile))
         {
-            NotifyTileClicked(tile);
+           return;   
         }
+
+        NotifyTileHover(tile);
+        
+        if (!_clickAction.WasPressedThisFrame())
+        {
+            return;
+        }
+        
+        NotifyTileClicked(tile);
     }
-    
+
+    private void NotifyTileHover(WorldTileView tileView)
+    {
+        OnTileHover?.Invoke(tileView);
+    }
+
     private void NotifyTileClicked(WorldTileView tileView)
     {
         if (_currentSelectedTileView == tileView)
