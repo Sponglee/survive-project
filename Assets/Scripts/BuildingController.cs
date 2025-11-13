@@ -1,6 +1,8 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
+using UnityEngine;
 
-public class BuildingController
+public class BuildingController : IDisposable
 {
     private BuildingModel _model;
     private BuildingView _view;
@@ -14,4 +16,9 @@ public class BuildingController
         _view = buildingView;
     }
 
+    public void Dispose()
+    {
+        _model = null;
+        GameObject.Destroy(_view.gameObject);
+    }
 }

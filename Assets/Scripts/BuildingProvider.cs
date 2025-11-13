@@ -6,12 +6,14 @@ namespace SurviveProject
 {
     public class BuildingProvider : IDisposable, IInitializable
     {
-        private BuildingMenuController _buildingMenuController;
-        private BuildingService _buildingService;
+        private readonly TileInputService _tileInputService;
+        private readonly BuildingMenuController _buildingMenuController;
+        private readonly BuildingService _buildingService;
         
         public BuildingProvider(
             BuildMenuView view,
             BuildingService buildingService,
+            TileInputService tileInputService,
             BuildingsPreset buildingsPreset
             )
         {
@@ -21,21 +23,24 @@ namespace SurviveProject
 
             _buildingMenuController = controller;
             _buildingService = buildingService;
+            _tileInputService = tileInputService;
+            
             _buildingMenuController.Initialize();
+        }
+        public void Initialize()
+        {
+            _buildingMenuController.OnBuyItemSelected += BuildingSelectedHandler;
         }
         
         public void Dispose()
         {
+            _buildingMenuController.OnBuyItemSelected -= BuildingSelectedHandler;
             _buildingMenuController.Dispose();
         }
 
-        public void Initialize()
+        private void BuildingSelectedHandler(BuildingData data)
         {
-            _buildingMenuController.OnBuyItemConfirmed += BuildHandler;
-        }
-
-        private void BuildHandler(BuildingData data)
-        {
+            _tileInputService.SelectTile(null);
             _buildingService.SelectBuilding(data);
         }
     }

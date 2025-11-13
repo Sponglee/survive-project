@@ -33,6 +33,12 @@ public class TileInputService : IDisposable
         _clickAction?.Disable();
     }
 
+    public void SelectTile(WorldTileView view)
+    {
+        _currentSelectedTileView = view;
+        OnTileClicked?.Invoke(view);
+    }
+    
     public void RaycastSelect()
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
@@ -77,13 +83,11 @@ public class TileInputService : IDisposable
     {
         if (_currentSelectedTileView == tileView)
         {
-            _currentSelectedTileView = null;
-            OnTileClicked?.Invoke(null);
+           SelectTile(null);
         }
         else
         {
-            _currentSelectedTileView = tileView;
-            OnTileClicked?.Invoke(tileView);
+           SelectTile(tileView);
         }
     }
 }

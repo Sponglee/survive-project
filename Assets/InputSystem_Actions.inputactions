@@ -189,7 +189,7 @@
                     "name": "One Modifier",
                     "id": "260a7afe-8641-49a6-9ad5-5e0d15eca252",
                     "path": "OneModifier(overrideModifiersNeedToBePressedFirst=true)",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "CameraRotate",
@@ -851,6 +851,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CancelButton",
+                    "type": "Button",
+                    "id": "f3c7ff7f-ad4d-4bb5-9b75-8a99cf56f728",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MultiBuildModifier",
+                    "type": "Button",
+                    "id": "b8e02b62-0a10-4417-a845-598b4206f144",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1291,6 +1309,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "BuildButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "08e4cb67-58a8-4d56-98d9-8d39e7941eed",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "CancelButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "88fc4135-85b5-400f-a7d3-a77696ede94a",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MultiBuildModifier",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

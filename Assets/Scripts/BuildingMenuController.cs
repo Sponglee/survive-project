@@ -6,7 +6,7 @@ namespace SurviveProject
 {
     public class BuildingMenuController : IDisposable
     {
-        public event Action<BuildingData> OnBuyItemConfirmed;
+        public event Action<BuildingData> OnBuyItemSelected;
         
         private BuildMenuModel _model;
         private BuildMenuView _view;
@@ -33,8 +33,7 @@ namespace SurviveProject
 
         private void BuildButtonHandler()
         {
-            Debug.Log($"BUILT {_model.BuildingData}");
-            OnBuyItemConfirmed?.Invoke(_model.BuildingData);
+            OnBuyItemSelected?.Invoke(_model.BuildingData);
         }
     }
 }
