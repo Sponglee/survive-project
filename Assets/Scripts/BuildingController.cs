@@ -19,6 +19,7 @@ public class BuildingController : IDisposable
     public void Dispose()
     {
         _model = null;
-        GameObject.Destroy(_view.gameObject);
+        
+        GameObject.Destroy(_view?.gameObject);
     }
 }

@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: BuildingsPreset
   m_EditorClassIdentifier: Assembly-CSharp::BuildingsPreset
   BuildingsList:
-  - Name: Factory
-    Prefab: {fileID: 7062176114287306806, guid: 02b2143a79ba05c4e8bef363d1add472, type: 3}
+  - Name: Oil Rig
+    Prefab: {fileID: 5032466431496057075, guid: 35efea2ca36def949866ee108157eb1c, type: 3}
+    Type: 1
   - Name: Road
     Prefab: {fileID: 4788199610791647692, guid: 8e344860d1539aa418d5283f781d9fee, type: 3}
+    Type: 2
+  - Name: Factory
+    Prefab: {fileID: 7062176114287306806, guid: 02b2143a79ba05c4e8bef363d1add472, type: 3}
+    Type: 0

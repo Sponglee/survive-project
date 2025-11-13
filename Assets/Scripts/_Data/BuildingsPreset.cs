@@ -13,4 +13,17 @@ public class BuildingData
 {
     public string Name;
     public GameObject Prefab;
+    public BuildingType Type;
+}
+
+public enum BuildingType
+{
+    SimpleBuilding,
+    ResourceBuilding,
+    RoadBuilding
+}
+
+public enum ResourceType
+{
+    Oil
 }

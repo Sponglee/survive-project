@@ -17,7 +17,8 @@ namespace SurviveProject
         public Transform BuildingHolder => _view.BuildingHolder;
         public TileState TileState => _model.TileState;
         public bool IsEmpty => TileState == TileState.Free;
-
+        public bool HasContent => _model.MapContent != null;
+        
         public WorldTileController(
             WorldTileModel model, 
             WorldTileView view,

@@ -41,7 +41,7 @@ namespace SurviveProject
         private void BuildingSelectedHandler(BuildingData data)
         {
             _tileInputService.SelectTile(null);
-            _buildingService.SelectBuilding(data);
+            _buildingService.StartBuild(data);
         }
     }
 
