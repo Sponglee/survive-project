@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Zenject;
 
 
@@ -14,11 +15,24 @@ namespace SurviveProject
             BuildMenuView view,
             BuildingService buildingService,
             TileInputService tileInputService,
-            BuildingsPreset buildingsPreset
+            BuildingsPreset buildingsPreset,
+            BuildingMenuItemFactory menuItemFactory
             )
         {
-            var preset = buildingsPreset.BuildingsList[0];
-            var model = new BuildMenuModel(preset);
+            
+            var presetList = buildingsPreset.BuildingsList;
+            var menuItemsList = new List<BuildingMenuItemController>();
+    
+            foreach (var data in presetList)
+            {
+                var menuItemModel = new BuildingMenuItemModel(data);
+                var menuItemView = menuItemFactory.CreateItemView();
+                var menuItemController = new BuildingMenuItemController(menuItemModel, menuItemView);
+
+                menuItemsList.Add(menuItemController);
+            }
+            
+            var model = new BuildMenuModel(menuItemsList);
             var controller = new BuildingMenuController(model, view);
 
             _buildingMenuController = controller;
@@ -43,6 +57,10 @@ namespace SurviveProject
             _tileInputService.SelectTile(null);
             _buildingService.StartBuild(data);
         }
-    }
 
+        public void ToggleBuildMenu(bool isBuilMenuActive)
+        {
+            _buildingMenuController.ToggleBuildMenu(isBuilMenuActive);
+        }
+    }
 }

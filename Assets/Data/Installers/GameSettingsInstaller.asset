@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SettingsInstaller
   _cameraSettingsPreset: {fileID: 11400000, guid: 569e575a97df64d0bba9bc3762f830d5, type: 2}
   _audioSettings: {fileID: 11400000, guid: d76b330e988204826a04f5895e077056, type: 2}
+  _uiElementsPreset: {fileID: 11400000, guid: f1e6819f909ddfe4fad004e01e9cfc70, type: 2}

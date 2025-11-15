@@ -1,12 +1,18 @@
 ﻿
+using System.Collections.Generic;
+
 namespace SurviveProject
 {
     public class BuildMenuModel
     {
-        public readonly BuildingData BuildingData;
-        public BuildMenuModel(BuildingData data)
+        public List<BuildingMenuItemController> BuildingMenuItems { get; } = new();
+        
+        public BuildMenuModel(List<BuildingMenuItemController> buildingMenuItems)
         {
-            BuildingData = data;
+            foreach (var item in buildingMenuItems)
+            {
+                BuildingMenuItems.Add(item);
+            }
         }
     }
 }

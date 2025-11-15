@@ -1,13 +1,11 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace SurviveProject
 {
     public class BuildMenuView : MonoBehaviour
     {
-        [SerializeField] private Button _buildButton;
-
-        public Button BuildButton => _buildButton;
+        [SerializeField] private Transform buildButtonsHolder;
+        
+        public Transform BuildButtonsHolder => buildButtonsHolder;
     }
 }

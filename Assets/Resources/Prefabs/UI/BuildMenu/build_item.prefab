@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7093038560233747665}
   - component: {fileID: 7329340633540869625}
   - component: {fileID: 6538239184245677471}
+  - component: {fileID: 5418513678910310740}
   m_Layer: 5
   m_Name: build_item
   m_TagString: Untagged
@@ -39,7 +40,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5400152100220441757
 CanvasRenderer:
@@ -153,6 +154,20 @@ MonoBehaviour:
   m_EffectColor: {r: 0.254717, g: 0.254717, b: 0.254717, a: 0.5}
   m_EffectDistance: {x: 5, y: -5}
   m_UseGraphicAlpha: 1
+--- !u!114 &5418513678910310740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8516566171569182103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 822749e554174f1697d3eaad4197f08e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurviveProject.BuildingMenuItemView
+  buyButton: {fileID: 7093038560233747665}
+  buildingText: {fileID: 3239294956139593569}
 --- !u!1 &8973942405614651023
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +260,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19.65
+  m_fontSize: 72
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1

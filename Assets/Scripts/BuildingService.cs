@@ -90,115 +90,6 @@ public class BuildingService : IDisposable, IInitializable
     }
 }
 
-public interface IBuildingStrategy
-{
-    public void Initialize(BuildingData targetBuildingData);
-    public void DeselectBuilding();
-    void TileHoverHandler(WorldTileView tile);
-    void TileClickHandler(WorldTileView obj);
-    void CancelBuildHandler();
-    void MultiBuildModifierChangedHandler(bool toggle);
-    void Dispose();
-}
-
-public class SimpleBuilding : IBuildingStrategy
-{
-    private readonly TileManager _tileManager;
-    private readonly BuildingFactory _buildingFactory;
-    
-    private bool _isBuildingSelected = false;
-    private bool _isMultiBuildEnabled = false;
-    private BuildingController _selectedBuilding;
-    
-    public SimpleBuilding(
-        TileManager tileManager,
-        BuildingFactory buildingFactory)
-    {
-        _tileManager = tileManager;
-        _buildingFactory = buildingFactory;
-    }
-    
-    public void Initialize(BuildingData targetBuildingData)
-    {
-        _isBuildingSelected = targetBuildingData != null;
-        
-        if (targetBuildingData == null)
-        {
-            return;
-        }
-        
-
-        var buildingModel = new BuildingModel(targetBuildingData);
-        var buildingView = _buildingFactory.CreateView(targetBuildingData.Prefab);
-        _selectedBuilding = new BuildingController(buildingView, buildingModel);
-        _selectedBuilding.View.transform.position = new Vector3(0,-100,0);
-    }
-    
-    public void Dispose()
-    {
-        _selectedBuilding?.Dispose();
-    }
-    
-    public void DeselectBuilding()
-    {
-        if (!_isBuildingSelected)
-        {
-            return;
-        }
-
-        _selectedBuilding.Dispose();
-        
-        _selectedBuilding = null;
-        _isBuildingSelected = false;
-    }
-
-    public void TileHoverHandler(WorldTileView tile)
-    {
-        if (!_isBuildingSelected)
-        {
-            return;
-        }
-        
-        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
-    }
-
-    public void TileClickHandler(WorldTileView obj)
-    {
-        if (!_isBuildingSelected || obj == null)
-        {
-            return;
-        }
-                
-        var tile = _tileManager.GetTileByView(obj);
-        _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
-        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
-        tile.SetBuilding(_selectedBuilding);
-        tile.SetState(TileState.Occupied);
-
-        if (_isMultiBuildEnabled)
-        {
-            Initialize(_selectedBuilding.Data);
-            return;
-        }
-
-        _selectedBuilding = null;
-        _isBuildingSelected = false;
-    }
-
-    public void CancelBuildHandler()
-    {
-        if (_isBuildingSelected)
-        {
-            DeselectBuilding();
-        }
-    }
-
-    public void MultiBuildModifierChangedHandler(bool toggle)
-    {
-        _isMultiBuildEnabled = toggle;
-    }
-}
-
 public class ResourceBuilding : IBuildingStrategy
 {
     private readonly TileManager _tileManager;
@@ -318,42 +209,21 @@ public class ResourceBuilding : IBuildingStrategy
     {
         _isMultiBuildEnabled = toggle;
     }
-}
 
-public class RoadBuilding : IBuildingStrategy
-{
-    public void Initialize(BuildingData targetBuildingData)
+    public bool CheckTilePlacementRule(WorldTileView view)
     {
-        throw new NotImplementedException();
-    }
+        var tile = _tileManager.GetTileByView(view);
 
-    public void DeselectBuilding()
-    {
-        throw new NotImplementedException();
-    }
+        if (tile == null)
+        {
+            return false;
+        }
 
-    public void TileHoverHandler(WorldTileView tile)
-    {
-        throw new NotImplementedException();
-    }
+        if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
+        {
+            return false;
+        }
 
-    public void TileClickHandler(WorldTileView obj)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void CancelBuildHandler()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void MultiBuildModifierChangedHandler(bool toggle)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-        throw new NotImplementedException();
+        return true;
     }
 }

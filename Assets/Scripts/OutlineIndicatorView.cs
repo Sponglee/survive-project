@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class OutlineIndicatorView : MonoBehaviour
 {
-    [SerializeField] private Outline _outline;
+    [SerializeField] private Outline outline;
 
     public void ToggleOutline(bool toggle)
     {
-        _outline.enabled = toggle;
+        outline.enabled = toggle;
     }
 }

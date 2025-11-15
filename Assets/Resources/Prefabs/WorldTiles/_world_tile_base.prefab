@@ -50,9 +50,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d98df37572a32448cdc968b5586da2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldTile
-  _outlineIndicatorView: {fileID: 4550272888510540085}
-  _mapContentHolder: {fileID: 944815944362518026}
-  _buildingHolder: {fileID: 277052181854862835}
+  outlineIndicatorView: {fileID: 4550272888510540085}
+  mapContentHolder: {fileID: 944815944362518026}
+  buildingHolder: {fileID: 277052181854862835}
 --- !u!114 &4550272888510540085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ae7cf92b083084ea5010aef275f317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _outline: {fileID: 3751056318015926310}
+  outline: {fileID: 3751056318015926310}
 --- !u!114 &3751056318015926310
 MonoBehaviour:
   m_ObjectHideFlags: 0

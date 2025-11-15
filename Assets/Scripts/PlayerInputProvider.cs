@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 using Zenject;
 
 
@@ -8,15 +7,16 @@ namespace SurviveProject
     public class PlayerInputProvider : IInitializable, IDisposable
     {
         private PlayerInputService _playerInputService;
-        private BuildMenuView _buildMenuView;
+        private BuildingProvider _buildingProvider;
         
-        private bool _canSelectTile = true;
+        private bool _isBuildMenuActive = false; 
         
         public PlayerInputProvider(
-            PlayerInputService playerInputService)
-
+            PlayerInputService playerInputService,
+            BuildingProvider buildingProvider)
         {
             _playerInputService = playerInputService;
+            _buildingProvider = buildingProvider;
         }
         
         public void Initialize()
@@ -31,7 +31,8 @@ namespace SurviveProject
         
         private void BuildMenuToggleHandler()
         {
-          Debug.Log("BUY MENU");   
+            _isBuildMenuActive = !_isBuildMenuActive;
+            _buildingProvider.ToggleBuildMenu(_isBuildMenuActive);
         }
     }
 }

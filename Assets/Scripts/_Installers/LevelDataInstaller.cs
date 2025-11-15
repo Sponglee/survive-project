@@ -1,20 +1,19 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 [CreateAssetMenu(fileName = "LevelDataInstaller", menuName = "Scriptable Objects/LevelDataInstaller")]
 public class LevelDataInstaller : ScriptableObjectInstaller
 {
-    public WorldPreset WorldPreset;
-    public PlayerPreset PlayerPreset;
-    [FormerlySerializedAs("WorldObjectsPreset")] public MapContentPreset mapContentPreset;
-    public BuildingsPreset BuildingsPreset;
+    public WorldPreset _worldPreset;
+    public PlayerPreset _playerPreset;
+    public MapContentPreset _mapContentPreset;
+    public BuildingsPreset _buildingsPreset;
     
     public override void InstallBindings()
     {
-        Container.Bind<WorldPreset>().FromInstance(WorldPreset).AsSingle();
-        Container.Bind<PlayerPreset>().FromInstance(PlayerPreset).AsSingle();
-        Container.Bind<MapContentPreset>().FromInstance(mapContentPreset).AsSingle();
-        Container.Bind<BuildingsPreset>().FromInstance(BuildingsPreset).AsSingle();
+        Container.Bind<WorldPreset>().FromInstance(_worldPreset).AsSingle();
+        Container.Bind<PlayerPreset>().FromInstance(_playerPreset).AsSingle();
+        Container.Bind<MapContentPreset>().FromInstance(_mapContentPreset).AsSingle();
+        Container.Bind<BuildingsPreset>().FromInstance(_buildingsPreset).AsSingle();
     }
 }

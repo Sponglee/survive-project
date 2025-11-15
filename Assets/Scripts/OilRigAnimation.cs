@@ -8,27 +8,27 @@ public class OilRigAnimation : MonoBehaviour
     [SerializeField] private float hammerSpeed = 2f;
     [SerializeField] private float hammerAngle = 30f;
     
-    private float hammerTime = 0f;
-    private float initialHammerRotationX;
+    private float _hammerTime = 0f;
+    private float _initialHammerRotationX;
     
     private void Start()
     {
         if (hammer != null)
         {
-            initialHammerRotationX = hammer.localRotation.eulerAngles.x;
+            _initialHammerRotationX = hammer.localRotation.eulerAngles.x;
         }
     }
 
     private void Update()
     {
-        if (hammer == null)
+        if (!hammer)
         {
             return;
         }
         
-        hammerTime += Time.deltaTime * hammerSpeed;
-        var oscillation = Mathf.Sin(hammerTime) * hammerAngle;
-        var newXRotation = initialHammerRotationX + oscillation;
+        _hammerTime += Time.deltaTime * hammerSpeed;
+        var oscillation = Mathf.Sin(_hammerTime) * hammerAngle;
+        var newXRotation = _initialHammerRotationX + oscillation;
         hammer.localRotation = Quaternion.Euler(newXRotation, 0f, 0f);
     }
 }

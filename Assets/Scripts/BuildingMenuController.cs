@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 using Zenject;
 
 namespace SurviveProject
@@ -17,23 +16,40 @@ namespace SurviveProject
             _model = menuModel;
             _view = view;
         }
+        
+        public void Initialize()
+        {
+            var menuItems = _model.BuildingMenuItems;
+
+            foreach (var menuItem in menuItems)
+            {
+                menuItem.Initialize();
+                menuItem.OnBuildingMenuItemSelected += BuildButtonHandler;
+            }
+        }
+
+        public void ToggleBuildMenu(bool toggle)
+        {
+            _view.gameObject.SetActive(toggle);
+        }
 
         public void Dispose()
         {
+            var menuItems = _model.BuildingMenuItems;
+         
+            foreach (var menuItem in menuItems)
+            {
+                menuItem.OnBuildingMenuItemSelected -= BuildButtonHandler;
+            }
+
             _model = null;
-            
-            _view?.BuildButton.onClick.RemoveListener(BuildButtonHandler);
             _view = null;
         }
 
-        public void Initialize()
-        {
-            _view.BuildButton.onClick.AddListener(BuildButtonHandler);
-        }
 
-        private void BuildButtonHandler()
+        private void BuildButtonHandler(BuildingData data)
         {
-            OnBuyItemSelected?.Invoke(_model.BuildingData);
+            OnBuyItemSelected?.Invoke(data);
         }
     }
 }

@@ -1,22 +1,20 @@
 using System;
-using SurviveProject;
 using UnityEngine;
-using Zenject;
 
 public class WorldTileView : MonoBehaviour, IDisposable
 {
-    [SerializeField] private OutlineIndicatorView _outlineIndicatorView;
-    [SerializeField] private Transform _mapContentHolder;
-    [SerializeField] private Transform _buildingHolder;
+    [SerializeField] private OutlineIndicatorView outlineIndicatorView;
+    [SerializeField] private Transform mapContentHolder;
+    [SerializeField] private Transform buildingHolder;
 
     private int _id;
 
     public int Id => _id;
     
-    public Transform ContentHolder => _mapContentHolder;
-    public Transform BuildingHolder => _buildingHolder;
+    public Transform ContentHolder => mapContentHolder;
+    public Transform BuildingHolder => buildingHolder;
 
-    public OutlineIndicatorView IndicatorView => _outlineIndicatorView;
+    public OutlineIndicatorView IndicatorView => outlineIndicatorView;
 
     public void SetId(int id)
     {
