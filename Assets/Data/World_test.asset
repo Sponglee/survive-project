@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 295f073bc2a1d9d4b8665e7e0eeeeae5, type: 3}
   m_Name: World_test
   m_EditorClassIdentifier: Assembly-CSharp::LevelPreset
-  TileSize: 2.1
+  TileSize: 2
   TileList:
   - {fileID: 5367916692168621234, guid: 5948f92d9cc9a974ca570aa8a469dd1f, type: 3}
   - {fileID: 1946265635000720062, guid: f6ad183c2ee36a34ba1737c33fa5735f, type: 3}

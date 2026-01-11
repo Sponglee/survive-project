@@ -22,6 +22,8 @@ namespace SurviveProject.Installers
             Container.BindInterfacesAndSelfTo<BuildingService>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<BuildingProvider>().AsSingle().NonLazy();
             
+            Container.BindInterfacesAndSelfTo<RoadsService>().AsSingle().NonLazy();
+
             Container.Bind<TileOutlineService>().AsSingle().NonLazy();
 
         }

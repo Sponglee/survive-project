@@ -1,21 +1,24 @@
 ﻿using SurviveProject;
 using UnityEngine;
 
-public class SimpleBuilding : IBuildingStrategy
+public class RoadBuildingStrategy : IBuildingStrategy
 {
     private readonly TileManager _tileManager;
     private readonly BuildingFactory _buildingFactory;
+    private readonly RoadsService _roadsService;
     
     private bool _isBuildingSelected = false;
     private bool _isMultiBuildEnabled = false;
     private BuildingController _selectedBuilding;
-    
-    public SimpleBuilding(
+
+    public RoadBuildingStrategy(
         TileManager tileManager,
+        RoadsService roadsService,
         BuildingFactory buildingFactory)
     {
         _tileManager = tileManager;
         _buildingFactory = buildingFactory;
+        _roadsService = roadsService;
     }
     
     public void Initialize(BuildingData targetBuildingData)
@@ -38,7 +41,7 @@ public class SimpleBuilding : IBuildingStrategy
     {
         _selectedBuilding?.Dispose();
     }
-    
+
     public void DeselectBuilding()
     {
         if (!_isBuildingSelected)
@@ -70,7 +73,6 @@ public class SimpleBuilding : IBuildingStrategy
         {
             return;
         }
-
         
         _selectedBuilding.View.transform.position = view.BuildingHolder.position;
     }
@@ -99,9 +101,10 @@ public class SimpleBuilding : IBuildingStrategy
         tile.SetBuilding(_selectedBuilding);
         tile.SetState(TileState.Occupied);
 
-        if (_isMultiBuildEnabled)
+        if (true)
         {
             Initialize(_selectedBuilding.Data);
+            _roadsService.InitializeRoad(_selectedBuilding, tile);
             return;
         }
 
@@ -119,6 +122,5 @@ public class SimpleBuilding : IBuildingStrategy
 
     public void MultiBuildModifierChangedHandler(bool toggle)
     {
-        _isMultiBuildEnabled = toggle;
     }
 }

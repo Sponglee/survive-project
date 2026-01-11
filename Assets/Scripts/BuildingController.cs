@@ -1,5 +1,4 @@
 ﻿using System;
-using TMPro;
 using UnityEngine;
 
 public class BuildingController : IDisposable
@@ -16,10 +15,18 @@ public class BuildingController : IDisposable
         _view = buildingView;
     }
 
+    public void Initialize()
+    {
+        
+    }
+    
     public void Dispose()
     {
-        _model = null;
+        if (_view != null && _view.gameObject != null)
+        {
+            GameObject.Destroy(_view.gameObject);
+        }
         
-        GameObject.Destroy(_view?.gameObject);
+        _model = null;
     }
 }

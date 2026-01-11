@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using SurviveProject;
+using UnityEngine;
 
 public class TileManager
 {
-    public Dictionary<int, ITile> ActiveTiles { get; } = new Dictionary<int, ITile>();
+    public Dictionary<Vector2, ITile> ActiveTiles { get; } = new Dictionary<Vector2, ITile>();
     
     public TileManager()
     {
         
     }
     
-    public void AddTile(int id, ITile tile)
+    public void AddTile(Vector2 coords, ITile tile)
     {
-        ActiveTiles.Add(id, tile);
+        ActiveTiles.Add(coords, tile);
     }
 
     private TileState GetTileDataFromMapContent(MapContentType objectDataType)
@@ -29,7 +30,12 @@ public class TileManager
 
     public ITile GetTileByView(WorldTileView worldTileView)
     {
-        var id = worldTileView.Id;
-        return ActiveTiles[id];
+        var coords = worldTileView.TileCoords;
+        return ActiveTiles[coords];
+    }
+
+    public ITile GetTileByCoord(Vector2 tileToCheckCoord)
+    {
+        return ActiveTiles[tileToCheckCoord];
     }
 }

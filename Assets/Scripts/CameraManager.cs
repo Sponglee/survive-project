@@ -21,6 +21,7 @@ namespace SurviveProject
         private CameraState _cameraState;
         public event Action<CameraState> CameraStateChanged; 
         
+        
         [Inject]
         public CameraManager(
             CinemachineCamera camera,

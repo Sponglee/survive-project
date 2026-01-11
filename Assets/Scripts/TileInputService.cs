@@ -66,7 +66,7 @@ public class TileInputService : IDisposable
 
         NotifyTileHover(tile);
         
-        if (!_clickAction.WasPressedThisFrame())
+        if (!_clickAction.WasPerformedThisFrame())
         {
             return;
         }

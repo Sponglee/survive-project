@@ -25,6 +25,8 @@ namespace SurviveProject
         private bool _isCameraMoving;
         private bool _isCameraPanning;
         private bool _isCameraZooming;
+
+        private bool _isZoomLocked = false;
         
         public CameraInputService(InputActionAsset input)
         {
@@ -71,7 +73,7 @@ namespace SurviveProject
                 OnCameraPan?.Invoke(CameraPanInput);
             }
 
-            if (_isCameraZooming)
+            if (_isCameraZooming && !_isZoomLocked)
             {
                 OnCameraZoom?.Invoke(CameraZoomInput);
             }
@@ -87,6 +89,11 @@ namespace SurviveProject
             _rotateAction?.Dispose();
             _zoomAction?.Dispose();
 
+        }
+
+        public void SetIsZoomLocked(bool toggle)
+        {
+            _isZoomLocked = toggle;
         }
     }
 }

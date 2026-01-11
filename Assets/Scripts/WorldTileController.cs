@@ -15,9 +15,12 @@ namespace SurviveProject
 
         public Transform MapContentHolder => _view.ContentHolder;
         public Transform BuildingHolder => _view.BuildingHolder;
+        public BuildingController BuildingController => _model.BuildingController;
+        public int Id => _model.Id;
         public TileState TileState => _model.TileState;
         public bool IsEmpty => TileState == TileState.Free;
         public bool HasContent => _model.MapContent != null;
+        public Vector2 Coords => _model.Coords;
         
         public WorldTileController(
             WorldTileModel model, 
@@ -60,6 +63,11 @@ namespace SurviveProject
 
         private void TileClickedHandler(WorldTileView obj)
         {
+            if (IsEmpty)
+            {
+                return;
+            }
+            
             _view.IndicatorView.ToggleOutline(obj != null && _view == obj);
         }
     }

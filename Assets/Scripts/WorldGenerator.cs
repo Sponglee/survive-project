@@ -1,3 +1,4 @@
+using System.Linq;
 using SurviveProject;
 using UnityEngine;
 using Zenject;
@@ -40,12 +41,11 @@ public class WorldGenerator : IInitializable
 
     private void GenerateMapContent()
     {
-        var tiles = _tileManager.ActiveTiles;
-    
-        for (var i = 0; i < tiles.Count; i++)
+        var tiles = _tileManager.ActiveTiles.Values.ToList();
+
+        foreach (var tile in tiles)
         {
-            var tile = tiles[i];
-            var hasObject = Random.Range(0, 100) >= 90;
+            var hasObject = Random.Range(0, 100) >= 95;
             if (!hasObject)
             {
                 continue;
@@ -77,17 +77,18 @@ public class WorldGenerator : IInitializable
                 var hasTile = GetTilePrefab(x, y, out var tilePrefab);
                 if (!hasTile)
                     continue;
-
+                
+                var coords = new Vector2(x, y);
                 var pos = GetSpawnPosition(x, y, _worldPreset.TileSize);
                 var tileView = _tileFactory.Create(tilePrefab);
                 tileView.transform.position = pos;
                 tileView.transform.SetParent(_worldHolder);
                
-                tileView.SetId(tileId);
-                var tileModel = new WorldTileModel(tileId, new Vector2(x,y));
+                tileView.SetId(tileId, coords);
+                var tileModel = new WorldTileModel(tileId, coords);
                 var tile = new WorldTileController(tileModel, tileView, _tileInputService);
                 
-                _tileManager.AddTile(tileId, tile);
+                _tileManager.AddTile(coords, tile);
                 tileId++;
             }
         }
@@ -113,7 +114,7 @@ public class WorldGenerator : IInitializable
         }
 
         var tileData = mapRows[y][x].ToString();
-        var parseSuccess = int.TryParse(tileData, out int mapTileData);
+        var parseSuccess = int.TryParse(tileData, out var mapTileData);
 
         if (!parseSuccess || _worldPreset.TileList.Length < mapTileData)
         {
