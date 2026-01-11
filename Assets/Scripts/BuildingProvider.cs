@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Zenject;
-
 
 namespace SurviveProject
 {
@@ -25,17 +24,9 @@ namespace SurviveProject
         {
             
             var presetList = buildingsPreset.BuildingsList;
-            var menuItemsList = new List<BuildingMenuItemController>();
-    
-            foreach (var data in presetList)
-            {
-                var menuItemModel = new BuildingMenuItemModel(data);
-                var menuItemView = menuItemFactory.CreateItemView();
-                var menuItemController = new BuildingMenuItemController(menuItemModel, menuItemView);
-
-                menuItemsList.Add(menuItemController);
-            }
             
+            var menuItemsList = (from data in presetList select new BuildingMenuItemModel(data) into menuItemModel let menuItemView = menuItemFactory.CreateItemView() select new BuildingMenuItemController(menuItemModel, menuItemView)).ToList();
+
             var model = new BuildMenuModel(menuItemsList);
             var controller = new BuildingMenuController(model, view);
 
@@ -52,40 +43,85 @@ namespace SurviveProject
             _buildingMenuController.OnBuyItemSelected += BuildingSelectedHandler;
             _playerInputService.OnCancelButtonPressed += BuildingCancelledHandler;
             
-            _tileInputService.OnTileHover += _buildingService.TileHoverHandler;
-            _tileInputService.OnTileClicked += _buildingService.TileClickHandler;
-            _playerInputService.OnBuildModifierChanged += _buildingService.MultiBuildModifierChangedHandler;
+            _tileInputService.OnTileHover += TileHoverHandler;
+            _tileInputService.OnTileClicked += TileClickHandler;
+            _playerInputService.OnBuildModifierChanged += MultiBuildModifierChangedHandler;
         }
         
         public void Dispose()
         {
             _buildingMenuController.OnBuyItemSelected -= BuildingSelectedHandler;
             _playerInputService.OnCancelButtonPressed -= BuildingCancelledHandler;
+            ToggleCameraZoomLock(false);
+            
             _buildingMenuController.Dispose();
             
-            _tileInputService.OnTileHover -= _buildingService.TileHoverHandler;
-            _tileInputService.OnTileClicked -= _buildingService.TileClickHandler;
-            _playerInputService.OnBuildModifierChanged -= _buildingService.MultiBuildModifierChangedHandler;
+            _tileInputService.OnTileHover -= TileHoverHandler;
+            _tileInputService.OnTileClicked -= TileClickHandler;
+            _playerInputService.OnBuildModifierChanged -= MultiBuildModifierChangedHandler;
             
             _buildingService.Dispose();
-        }
-
-        private void BuildingSelectedHandler(BuildingData data)
-        {
-            _tileInputService.SelectTile(null);
-            _buildingService.StartBuild(data);
-            _cameraInputService.SetIsZoomLocked(true);
-        }
-
-        private void BuildingCancelledHandler()
-        {
-            _buildingService.CancelBuildHandler();
-            _cameraInputService.SetIsZoomLocked(false);
         }
 
         public void ToggleBuildMenu(bool isBuilMenuActive)
         {
             _buildingMenuController.ToggleBuildMenu(isBuilMenuActive);
+        }
+        
+        private void TileHoverHandler(WorldTileView tile)
+        {
+            _buildingService.BuildingAtTileHover(tile);
+        }
+    
+        private void TileClickHandler(WorldTileView obj)
+        {
+           BuildingCompletedHandler(obj);
+        }
+    
+        private void MultiBuildModifierChangedHandler(bool toggle)
+        {
+            _buildingService.SetMultiBuildModifier(toggle);
+        }
+        
+        private void BuildingSelectedHandler(BuildingData data)
+        {
+            _tileInputService.SelectTile(null);
+            _buildingService.StartBuild(data);
+            ToggleCameraZoomLock(true);
+        }
+
+        private void BuildingCompletedHandler(WorldTileView obj)
+        {
+           var isCompleted = _buildingService.TryCompleteBuild(obj);
+           if (isCompleted)
+           {
+            ToggleCameraZoomLock(false);
+           } 
+        }
+        
+        private void BuildingCancelledHandler()
+        {
+            _buildingService.CancelBuild();
+            ToggleCameraZoomLock(false);
+        }
+
+        private void RotateBuildingHandler(float axisValue)
+        {
+           _buildingService.RotateBuilding(axisValue);
+        }
+
+        private void ToggleCameraZoomLock(bool toggle)
+        {
+            _cameraInputService.SetIsZoomLocked(toggle);
+
+            if (toggle)
+            {
+                _cameraInputService.OnCameraZoom += RotateBuildingHandler;
+            }
+            else
+            {
+                _cameraInputService.OnCameraZoom -= RotateBuildingHandler;
+            }
         }
     }
 }

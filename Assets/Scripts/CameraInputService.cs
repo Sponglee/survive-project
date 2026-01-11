@@ -11,6 +11,8 @@ namespace SurviveProject
         public Vector2 CameraPanInput { get; private set; }
         public float CameraRotateInput { get; private set; }
         public float CameraZoomInput { get; private set; }
+        public bool IsZoomLocked => _isZoomLocked;
+        
         public event Action<Vector2> OnCameraMove;
         public event Action<Vector2> OnCameraPan;
 
@@ -73,7 +75,7 @@ namespace SurviveProject
                 OnCameraPan?.Invoke(CameraPanInput);
             }
 
-            if (_isCameraZooming && !_isZoomLocked)
+            if (_isCameraZooming)
             {
                 OnCameraZoom?.Invoke(CameraZoomInput);
             }

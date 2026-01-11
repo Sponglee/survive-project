@@ -1,7 +1,8 @@
-﻿using SurviveProject;
+﻿using System;
+using SurviveProject;
 using UnityEngine;
 
-public class SimpleBuildingStrategy : IBuildingStrategy
+public class SimpleBuildingStrategy : IBuildingStrategy, IDisposable
 {
     private readonly TileManager _tileManager;
     private readonly BuildingFactory _buildingFactory;
@@ -38,21 +39,8 @@ public class SimpleBuildingStrategy : IBuildingStrategy
     {
         _selectedBuilding?.Dispose();
     }
-    
-    public void DeselectBuilding()
-    {
-        if (!_isBuildingSelected)
-        {
-            return;
-        }
 
-        _selectedBuilding.Dispose();
-        
-        _selectedBuilding = null;
-        _isBuildingSelected = false;
-    }
-
-    public void TileHoverHandler(WorldTileView view)
+    public void BuildingTileCheck(WorldTileView view)
     {
         if (!_isBuildingSelected)
         {
@@ -76,23 +64,23 @@ public class SimpleBuildingStrategy : IBuildingStrategy
         SetPlacementValid(true);
     }
 
-    public void TileClickHandler(WorldTileView obj)
+    public bool TryCompleteBuilding(WorldTileView obj)
     {
         if (!_isBuildingSelected || obj == null)
         {
-            return;
+            return false;
         }
                 
         var tile = _tileManager.GetTileByView(obj);
 
         if (tile == null)
         {
-            return;
+            return false;
         }
 
         if (tile.HasContent)
         {
-            return;
+            return false;
         }
         
         _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
@@ -103,32 +91,39 @@ public class SimpleBuildingStrategy : IBuildingStrategy
         if (_isMultiBuildEnabled)
         {
             Initialize(_selectedBuilding.Data);
-            return;
+            return false;
         }
 
         _selectedBuilding = null;
         _isBuildingSelected = false;
+
+        return true;
     }
 
-    public void CancelBuildHandler()
+    public void CancelBuild()
     {
-        if (_isBuildingSelected)
+        if (!_isBuildingSelected)
         {
-            DeselectBuilding();
+            return;
         }
+
+        _selectedBuilding.Dispose();
+        
+        _selectedBuilding = null;
+        _isBuildingSelected = false;
     }
 
-    public void MultiBuildModifierChangedHandler(bool toggle)
+    public void ChangeMultiBuildModifier(bool toggle)
     {
         _isMultiBuildEnabled = toggle;
     }
-
-    public void RotateBuildingHandler()
+    
+    public void RotateBuilding(float angle)
     {
-        
+        _selectedBuilding.Rotate(angle);
     }
     
-    private void SetPlacementValid(bool valid)
+    public void SetPlacementValid(bool valid)
     {
         _selectedBuilding.View.SetIsBuildable(valid);
     }

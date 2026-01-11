@@ -54,6 +54,11 @@ namespace SurviveProject
         
         private void ZoomCamera(float zoom)
         {
+            if(_cameraInputService.IsZoomLocked)
+            {
+                return;
+            }
+            
             _cameraManager.Zoom(zoom);
         }
     }

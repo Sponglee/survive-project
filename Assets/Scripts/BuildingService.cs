@@ -25,7 +25,8 @@ public class BuildingService : IDisposable, IInitializable
 
     public void Dispose()
     {
-        _selectedBuild?.Dispose();
+       var disposableBuild = _selectedBuild as IDisposable;
+           disposableBuild?.Dispose();
     }
 
     public void StartBuild(BuildingData targetBuildingData)
@@ -34,32 +35,37 @@ public class BuildingService : IDisposable, IInitializable
         
         _selectedBuild?.Initialize(targetBuildingData);
     }
+
+    public void BuildingAtTileHover(WorldTileView tile)
+    {
+        _selectedBuild?.BuildingTileCheck(tile);
+    }
+    
+    public void SetMultiBuildModifier(bool toggle)
+    {
+       _selectedBuild?.ChangeMultiBuildModifier(toggle);
+    }
+    
+    public bool TryCompleteBuild(WorldTileView obj)
+    {
+        return _selectedBuild != null && _selectedBuild.TryCompleteBuilding(obj);
+    }
+    
+    public void CancelBuild()
+    {
+        _selectedBuild?.CancelBuild();
+    }
+    
+    public void RotateBuilding(float rotationDirection)
+    {
+        var angle = rotationDirection > 0 ? 90f : -90f;
+        _selectedBuild.RotateBuilding(angle);
+    }
     
     private IBuildingStrategy GetBuildStrategy(BuildingData targetBuildingData)
     {
         var type = targetBuildingData.Type;
         var buildingStrategy = _buildingFactory.CreateStrategy(type);
         return buildingStrategy;
-    }
-
-
-    public void TileHoverHandler(WorldTileView tile)
-    {
-        _selectedBuild?.TileHoverHandler(tile);
-    }
-    
-    public void TileClickHandler(WorldTileView obj)
-    {
-        _selectedBuild?.TileClickHandler(obj);
-    }
-    
-    public void CancelBuildHandler()
-    {
-        _selectedBuild?.CancelBuildHandler();
-    }
-    
-    public void MultiBuildModifierChangedHandler(bool toggle)
-    {
-       _selectedBuild.MultiBuildModifierChangedHandler(toggle);
     }
 }

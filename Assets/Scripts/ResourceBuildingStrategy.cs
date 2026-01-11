@@ -1,7 +1,8 @@
-﻿using SurviveProject;
+﻿using System;
+using SurviveProject;
 using UnityEngine;
 
-public class ResourceBuildingStrategy : IBuildingStrategy
+public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
 {
     private readonly TileManager _tileManager;
     private readonly BuildingFactory _buildingFactory;
@@ -38,8 +39,69 @@ public class ResourceBuildingStrategy : IBuildingStrategy
     {
         _selectedBuilding?.Dispose();
     }
-    
-    public void DeselectBuilding()
+
+    public void BuildingTileCheck(WorldTileView view)
+    {
+        if (!_isBuildingSelected)
+        {
+            return;
+        }
+
+        var tile = _tileManager.GetTileByView(view);
+        
+        _selectedBuilding.View.transform.position = view.BuildingHolder.position;
+        SetPlacementValid(false);
+
+        if (tile == null)
+        {
+            return;
+        }
+
+        if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
+        {
+            return;
+        }
+
+        SetPlacementValid(true);
+    }
+
+    public bool TryCompleteBuilding(WorldTileView obj)
+    {
+        if (!_isBuildingSelected || obj == null)
+        {
+            return false;
+        }
+                
+        var tile = _tileManager.GetTileByView(obj);
+        
+        if (tile == null)
+        {
+            return false;
+        }
+
+        if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
+        {
+            return false;
+        }
+        
+        _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
+        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
+        tile.SetBuilding(_selectedBuilding);
+        tile.SetState(TileState.Occupied);
+
+        if (_isMultiBuildEnabled)
+        {
+            Initialize(_selectedBuilding.Data);
+            return false;
+        }
+
+        _selectedBuilding = null;
+        _isBuildingSelected = false;
+        
+        return true;
+    }
+
+    public void CancelBuild()
     {
         if (!_isBuildingSelected)
         {
@@ -52,76 +114,21 @@ public class ResourceBuildingStrategy : IBuildingStrategy
         _isBuildingSelected = false;
     }
 
-    public void TileHoverHandler(WorldTileView view)
-    {
-        if (!_isBuildingSelected)
-        {
-            return;
-        }
-
-        _selectedBuilding.View.transform.position = new Vector3(0, -100, 0);
-        var tile = _tileManager.GetTileByView(view);
-
-        if (tile == null)
-        {
-            return;
-        }
-
-        if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
-        {
-            return;
-        }
-
-        _selectedBuilding.View.transform.position = view.BuildingHolder.position;
-    }
-
-    public void TileClickHandler(WorldTileView obj)
-    {
-        if (!_isBuildingSelected || obj == null)
-        {
-            return;
-        }
-                
-        var tile = _tileManager.GetTileByView(obj);
-        
-        if (tile == null)
-        {
-            return;
-        }
-
-        if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
-        {
-            return;
-        }
-        
-        _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
-        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
-        tile.SetBuilding(_selectedBuilding);
-        tile.SetState(TileState.Occupied);
-
-        if (_isMultiBuildEnabled)
-        {
-            Initialize(_selectedBuilding.Data);
-            return;
-        }
-
-        _selectedBuilding = null;
-        _isBuildingSelected = false;
-    }
-
-    public void CancelBuildHandler()
-    {
-        if (_isBuildingSelected)
-        {
-            DeselectBuilding();
-        }
-    }
-
-    public void MultiBuildModifierChangedHandler(bool toggle)
+    public void ChangeMultiBuildModifier(bool toggle)
     {
         _isMultiBuildEnabled = toggle;
     }
 
+    public void RotateBuilding(float angle)
+    {
+        _selectedBuilding.Rotate(angle);
+    }
+    
+    public void SetPlacementValid(bool valid)
+    {
+        _selectedBuilding.View.SetIsBuildable(valid);
+    }
+    
     public bool CheckTilePlacementRule(WorldTileView view)
     {
         var tile = _tileManager.GetTileByView(view);
