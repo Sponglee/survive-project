@@ -1,9 +1,8 @@
 ﻿using System;
 using SurviveProject;
 using UnityEngine;
-using Zenject;
 
-public class RoadBuildingStrategy : IBuildingStrategy
+public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
 {
     private readonly TileManager _tileManager;
     private readonly BuildingFactory _buildingFactory;
@@ -11,7 +10,7 @@ public class RoadBuildingStrategy : IBuildingStrategy
     private readonly BuildingService _buildingService;
     
     private bool _isBuildingSelected = false;
-    private bool _isMultiBuildEnabled = false;
+    private bool _isMultiBuildEnabled = true;
     private bool _isBuildActionPressed = false;
     
     private BuildingController _selectedBuilding;
@@ -34,6 +33,7 @@ public class RoadBuildingStrategy : IBuildingStrategy
     }
     
     public event Action<WorldTileView> OnCompletedBuild;
+    public bool MultibuildModifier => _isMultiBuildEnabled;
 
     public void Initialize(BuildingData targetBuildingData)
     {
@@ -67,6 +67,9 @@ public class RoadBuildingStrategy : IBuildingStrategy
         }
         else
         {
+
+            var lastKnownTile = _tileInputService.LastRayCastTile;
+            OnCompletedBuild?.Invoke(lastKnownTile);
         }
     }
 
@@ -75,7 +78,6 @@ public class RoadBuildingStrategy : IBuildingStrategy
         if (!_isBuildingSelected)
         {
             _selectedBuilding = InitBuildingTile(_buildingData);
-            return;
         }
        
         if (view == null)
@@ -106,30 +108,52 @@ public class RoadBuildingStrategy : IBuildingStrategy
             _selectedBuilding.View.transform.position = view.BuildingHolder.position;
             
             SetPlacementValid(tile.IsEmpty);
+
+            OnCompletedBuild?.Invoke(view);
         }
     }
 
-    public void BuildingTileClick(WorldTileView obj)
-    {
-    }
+    public void BuildingTileClick(WorldTileView obj) { }
     
-    public bool TryCompleteBuilding(WorldTileView worldTileView)
+    public bool TryCompleteBuilding(WorldTileView obj)
     {
-        return false;
+        if (obj == null)
+        {
+            _selectedBuilding = null;
+            _isBuildingSelected = false;
+            return true;
+        }
+        
+        var tile = _tileManager.GetTileByView(obj);
+
+        if (_selectedBuilding == null)
+        {
+            return true;
+        }
+        
+        _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
+        _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
+        tile.SetBuilding(_selectedBuilding);
+        tile.SetState(TileState.Occupied);
+        
+        _selectedBuilding = null;
+        _isBuildingSelected = false;
+        return true;
+
     }
 
     public void CancelBuild()
     {
+        _buildingService.ToggleBuildingIndicator(false);
+        
         if (!_isBuildingSelected)
         {
             return;
         }
         
         _selectedBuilding.Dispose();
-        
         _selectedBuilding = null;
         _isBuildingSelected = false;
-        _buildingService.ToggleBuildingIndicator(false);
     }
 
     public void ChangeMultiBuildModifier(bool toggle) {}

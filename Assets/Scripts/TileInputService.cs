@@ -18,7 +18,8 @@ public class TileInputService : IDisposable
     private WorldTileView _lastRaycastTile;
     
     private Action<InputAction.CallbackContext> _clickHoldHandler;
-    public event Action<bool> OnClickActionHold; 
+    public event Action<bool> OnClickActionHold;
+    public WorldTileView LastRayCastTile => _lastRaycastTile;
     
     public TileInputService(
         InputActionAsset inputActions,

@@ -20,7 +20,8 @@ public class SimpleBuildingStrategy : IBuildingStrategy, IDisposable
     }
     
     public event Action<WorldTileView> OnCompletedBuild;
-    
+    public bool MultibuildModifier => _isMultiBuildEnabled;
+
     public void Initialize(BuildingData targetBuildingData)
     {
         _isBuildingSelected = targetBuildingData != null;
@@ -44,7 +45,6 @@ public class SimpleBuildingStrategy : IBuildingStrategy, IDisposable
 
     public void BuildingTileCheck(WorldTileView view)
     {
-        
         if (!_isBuildingSelected)
         {
             return;

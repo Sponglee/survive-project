@@ -10,4 +10,5 @@
         void RotateBuilding(float angle);
         event Action<WorldTileView> OnCompletedBuild;
         bool TryCompleteBuilding(WorldTileView worldTileView);
+        bool MultibuildModifier { get; }
     }

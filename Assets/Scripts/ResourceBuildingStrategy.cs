@@ -22,7 +22,8 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
     }
 
     public event Action<WorldTileView> OnCompletedBuild;
-
+    public bool MultibuildModifier => _isMultiBuildEnabled;
+    
     public void Initialize(BuildingData targetBuildingData)
     {
         _isBuildingSelected = targetBuildingData != null;

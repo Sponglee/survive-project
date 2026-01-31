@@ -12,7 +12,6 @@ public class BuildingService : IDisposable, IInitializable
     private LayerMask _raycastLayerMask;
 
     private IBuildingStrategy _selectedBuild;
-    private bool _multiBuildModifier;
     private bool _isBuildingInProgress;
 
     public BuildingService(
@@ -70,8 +69,7 @@ public class BuildingService : IDisposable, IInitializable
     
     public void SetMultiBuildModifier(bool toggle)
     {
-        _multiBuildModifier = toggle;
-       _selectedBuild?.ChangeMultiBuildModifier(_multiBuildModifier);
+       _selectedBuild?.ChangeMultiBuildModifier(toggle);
     }
     
     public bool TryCompleteBuild(WorldTileView obj)
@@ -83,7 +81,7 @@ public class BuildingService : IDisposable, IInitializable
             return false;
         }
 
-        if (_multiBuildModifier)
+        if (_selectedBuild.MultibuildModifier)
         {
            return false;
         }
@@ -97,13 +95,18 @@ public class BuildingService : IDisposable, IInitializable
     public void CancelBuild()
     {
         _selectedBuild?.CancelBuild();
-        
-        if (_selectedBuild != null)
-        {
-            _selectedBuild.OnCompletedBuild -= SelectedBuildingCompleted;
-            _isBuildingInProgress = false;
 
+        if (_selectedBuild == null)
+        {
+            return;
         }
+        
+        _selectedBuild.OnCompletedBuild -= SelectedBuildingCompleted;
+        _isBuildingInProgress = false;
+            
+        var disposableBuild = _selectedBuild as IDisposable;
+        disposableBuild?.Dispose();
+        _selectedBuild = null;
     }
 
     public void RotateBuilding(float rotationDirection)
