@@ -11,10 +11,15 @@ public class TileInputService : IDisposable
 
     private WorldTileView _currentSelectedTileView = null;
     private readonly InputAction _clickAction;
-    
+    private readonly InputAction _clickActionHold;
+
     private readonly Camera _camera;
     private readonly LayerMask _rayCastLayerMask;
-
+    private WorldTileView _lastRaycastTile;
+    
+    private Action<InputAction.CallbackContext> _clickHoldHandler;
+    public event Action<bool> OnClickActionHold; 
+    
     public TileInputService(
         InputActionAsset inputActions,
         CameraManager cameraManager)
@@ -22,7 +27,16 @@ public class TileInputService : IDisposable
         var map = inputActions.FindActionMap("Map");
         map.Enable(); 
         _clickAction = map.FindAction("MouseClick");
+        _clickActionHold = map.FindAction("MouseClickHold");
+
         _clickAction.Enable();
+        _clickActionHold.Enable();
+        
+        _clickActionHold.started += ctx =>
+        {
+            OnClickActionHold?.Invoke(true);
+        };
+        _clickActionHold.canceled += ctx =>  OnClickActionHold?.Invoke(false);;
         
         _rayCastLayerMask = 1 << LayerMask.NameToLayer("WorldTiles");
         _camera = cameraManager.MainCamera;
@@ -31,6 +45,10 @@ public class TileInputService : IDisposable
     public void Dispose()
     {
         _clickAction?.Disable();
+        _clickActionHold?.Disable();
+        
+        _clickAction?.Dispose();
+        _clickActionHold?.Dispose();
     }
 
     public void SelectTile(WorldTileView view)
@@ -43,6 +61,10 @@ public class TileInputService : IDisposable
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
+            if (_lastRaycastTile != null)
+            {
+                NotifyTileHover(null);
+            }
             return;
         }
         
@@ -54,17 +76,28 @@ public class TileInputService : IDisposable
         var mousePos = Mouse.current.position.ReadValue();
         var ray = _camera.ScreenPointToRay(mousePos);
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, 100f, _rayCastLayerMask))
+        if (!Physics.Raycast(ray, out var hit, 100f, _rayCastLayerMask))
         {
+            if (_lastRaycastTile != null)
+            {
+                NotifyTileHover(null);
+            }
             return;
         }
             
         if (!hit.collider.TryGetComponent(out WorldTileView tile))
-        {
-           return;   
+        { 
+            if (_lastRaycastTile != null)
+            {
+                NotifyTileHover(null);
+            }
+            return;   
         }
 
-        NotifyTileHover(tile);
+        if (_lastRaycastTile != tile)
+        {
+            NotifyTileHover(tile);
+        }
         
         if (!_clickAction.WasPerformedThisFrame())
         {
@@ -76,6 +109,7 @@ public class TileInputService : IDisposable
 
     private void NotifyTileHover(WorldTileView tileView)
     {
+        _lastRaycastTile = tileView;
         OnTileHover?.Invoke(tileView);
     }
 

@@ -13,6 +13,7 @@ namespace SurviveProject
         private InputAction _buildMenuAction;
         private InputAction _cancelButtonAction;
         private InputAction _multiBuildModifierAction;
+        private InputAction _actionButtonPressed;
         
         public PlayerInputService(InputActionAsset input)
         {

@@ -9,6 +9,7 @@ namespace SurviveProject
 {
     public class TileInputProvider : IInitializable, ITickable, IDisposable
     {
+        private readonly BuildingService _buildingService;
         private readonly TileManager _tileManager;
         private readonly TileInputService _tileInputService;
         private readonly CameraManager _cameraManager;
@@ -17,11 +18,13 @@ namespace SurviveProject
 
         public TileInputProvider(
             TileInputService tileInputService,
+            BuildingService buildingService,
             TileManager tileManager,
             CameraManager cameraManager)
 
         {
             _tileInputService = tileInputService;
+            _buildingService = buildingService;
             _tileManager = tileManager;
             _cameraManager = cameraManager;
         }
@@ -53,6 +56,11 @@ namespace SurviveProject
             var tile = _tileManager.GetTileByView(obj);
 
             if (tile.IsEmpty)
+            {
+                return;
+            }
+
+            if (_buildingService.IsBuildingInProgress)
             {
                 return;
             }

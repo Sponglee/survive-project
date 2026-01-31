@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using SurviveProject;
 using UnityEngine;
 
@@ -18,7 +20,9 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
         _tileManager = tileManager;
         _buildingFactory = buildingFactory;
     }
-    
+
+    public event Action<WorldTileView> OnCompletedBuild;
+
     public void Initialize(BuildingData targetBuildingData)
     {
         _isBuildingSelected = targetBuildingData != null;
@@ -46,6 +50,12 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
         {
             return;
         }
+        
+        if (view == null)
+        {
+            _selectedBuilding.View.transform.position = new Vector3(0,-100,0);
+            return;
+        }
 
         var tile = _tileManager.GetTileByView(view);
         
@@ -57,6 +67,11 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
             return;
         }
 
+        if (!tile.IsEmpty)
+        {
+            return;
+        }
+        
         if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
         {
             return;
@@ -65,24 +80,36 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
         SetPlacementValid(true);
     }
 
-    public bool TryCompleteBuilding(WorldTileView obj)
+    public void BuildingTileClick(WorldTileView obj)
     {
         if (!_isBuildingSelected || obj == null)
         {
-            return false;
+            return;
         }
                 
         var tile = _tileManager.GetTileByView(obj);
         
         if (tile == null)
         {
-            return false;
+            return;
+        }
+
+        if (!tile.IsEmpty)
+        {
+            return;
         }
 
         if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
         {
-            return false;
+            return;
         }
+        
+        OnCompletedBuild?.Invoke(obj);
+    }
+    
+    public bool TryCompleteBuilding(WorldTileView obj)
+    {
+        var tile = _tileManager.GetTileByView(obj);
         
         _selectedBuilding.View.transform.SetParent(tile.BuildingHolder);
         _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
@@ -92,14 +119,17 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
         if (_isMultiBuildEnabled)
         {
             Initialize(_selectedBuilding.Data);
-            return false;
+            return true;
         }
 
+        
+        
         _selectedBuilding = null;
         _isBuildingSelected = false;
-        
+
         return true;
     }
+
 
     public void CancelBuild()
     {

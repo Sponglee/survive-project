@@ -7,27 +7,27 @@ namespace SurviveProject
 {
     public class CameraInputService : IInitializable, ITickable, IDisposable
     {
-        public Vector2 CameraMoveInput { get; private set; }
-        public Vector2 CameraPanInput { get; private set; }
-        public float CameraRotateInput { get; private set; }
-        public float CameraZoomInput { get; private set; }
+        private Vector2 CameraMoveInput { get; set; }
+        private Vector2 CameraPanInput { get; set; }
+        private float CameraRotateInput { get; set; }
+        private float CameraZoomInput { get; set; }
         public bool IsZoomLocked => _isZoomLocked;
         
         public event Action<Vector2> OnCameraMove;
         public event Action<Vector2> OnCameraPan;
-
         public event Action<float> OnCameraRotate;
         public event Action<float> OnCameraZoom; 
 
-        private InputAction _moveAction;
-        private InputAction _rotateAction;
-        private InputAction _zoomAction;
-        private InputAction _panAction;
+        private readonly InputAction _moveAction;
+        private readonly InputAction _rotateAction;
+        private readonly InputAction _zoomAction;
+        private readonly InputAction _panAction;
         
         private bool _isCameraMoving;
         private bool _isCameraPanning;
         private bool _isCameraZooming;
-
+        private bool _isCameraRotating;
+        
         private bool _isZoomLocked = false;
         
         public CameraInputService(InputActionAsset input)
@@ -51,11 +51,25 @@ namespace SurviveProject
             _zoomAction.started += ctx => _isCameraZooming = true;
             _zoomAction.canceled += ctx => _isCameraZooming = false;
 
-            _rotateAction.performed += ctx => OnCameraRotate?.Invoke(CameraRotateInput);
+            _rotateAction.performed += ctx => _isCameraRotating = true;
+            _rotateAction.canceled += ctx => _isCameraRotating = false;
 
             _moveAction.Enable();
             _rotateAction.Enable();
             _zoomAction.Enable();
+        }
+        
+        public void Dispose()
+        {
+            _moveAction?.Disable();
+            _rotateAction?.Disable();
+            _zoomAction?.Disable();
+            _rotateAction?.Disable();
+            
+            _moveAction?.Dispose();
+            _rotateAction?.Dispose();
+            _zoomAction?.Dispose();
+            _rotateAction?.Dispose();
         }
         
         public void Tick()
@@ -79,18 +93,11 @@ namespace SurviveProject
             {
                 OnCameraZoom?.Invoke(CameraZoomInput);
             }
-        }
-        
-        public void Dispose()
-        {
-            _moveAction?.Disable();
-            _rotateAction?.Disable();
-            _zoomAction?.Disable();
-            
-            _moveAction?.Dispose();
-            _rotateAction?.Dispose();
-            _zoomAction?.Dispose();
 
+            if (_isCameraRotating)
+            {
+                OnCameraRotate?.Invoke(CameraRotateInput);
+            }
         }
 
         public void SetIsZoomLocked(bool toggle)

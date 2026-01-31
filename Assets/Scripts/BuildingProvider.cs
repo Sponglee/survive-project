@@ -35,7 +35,6 @@ namespace SurviveProject
             _tileInputService = tileInputService;
             _cameraInputService = cameraInputService;
             _playerInputService = playerInputService;
-            
             _buildingMenuController.Initialize();
         }
         public void Initialize()
@@ -43,15 +42,21 @@ namespace SurviveProject
             _buildingMenuController.OnBuyItemSelected += BuildingSelectedHandler;
             _playerInputService.OnCancelButtonPressed += BuildingCancelledHandler;
             
+            _buildingService.OnBuildingCompleted += BuildingCompletedHandler;
+            
             _tileInputService.OnTileHover += TileHoverHandler;
             _tileInputService.OnTileClicked += TileClickHandler;
             _playerInputService.OnBuildModifierChanged += MultiBuildModifierChangedHandler;
+
         }
         
         public void Dispose()
         {
             _buildingMenuController.OnBuyItemSelected -= BuildingSelectedHandler;
             _playerInputService.OnCancelButtonPressed -= BuildingCancelledHandler;
+            
+            _buildingService.OnBuildingCompleted -= BuildingCompletedHandler;
+
             ToggleCameraZoomLock(false);
             
             _buildingMenuController.Dispose();
@@ -75,7 +80,7 @@ namespace SurviveProject
     
         private void TileClickHandler(WorldTileView obj)
         {
-           BuildingCompletedHandler(obj);
+           _buildingService.BuildingTileClick(obj);
         }
     
         private void MultiBuildModifierChangedHandler(bool toggle)
@@ -95,7 +100,7 @@ namespace SurviveProject
            var isCompleted = _buildingService.TryCompleteBuild(obj);
            if (isCompleted)
            {
-            ToggleCameraZoomLock(false);
+                ToggleCameraZoomLock(false);
            } 
         }
         

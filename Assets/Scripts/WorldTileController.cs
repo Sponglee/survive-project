@@ -63,12 +63,12 @@ namespace SurviveProject
 
         private void TileClickedHandler(WorldTileView obj)
         {
-            if (IsEmpty)
-            {
-                return;
-            }
-            
-            _view.IndicatorView.ToggleOutline(obj != null && _view == obj);
+            // if (IsEmpty)
+            // {
+            //     return;
+            // }
+            //
+            // // _view.IndicatorView.ToggleOutline(obj != null && _view == obj);
         }
     }
 }
