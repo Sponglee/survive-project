@@ -1,24 +1,36 @@
+using System;
+using SurviveProject;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class RoadView : BuildingView
 {
-    [SerializeField] private GameObject[] _roadVariants;
-
-
-    private void Awake()
+    [SerializeField] private RoadVariant[] roadVariants;
+    [SerializeField] private Transform rotationPivot;
+    
+    public void SetRoadType(RoadsService.RoadType roadType, float rotation)
     {
+        foreach (var variant in roadVariants)
+        {
+            if (variant?.RoadObject != null)
+            {
+                variant.RoadObject.SetActive(false);
+            }
+        }
 
+        var matchingVariant = Array.Find(roadVariants, v => v.RoadType == roadType);
+        
+        if (matchingVariant?.RoadObject != null)
+        {
+            matchingVariant.RoadObject.SetActive(true);
+            
+            rotationPivot.transform.localRotation = Quaternion.Euler(0f, rotation, 0f);
+        }
     }
-
-    public void EnableRoadVariantById(int index)
+    
+    [Serializable]
+    public class RoadVariant
     {
-      for (var i = 0; i < _roadVariants.Length; i++)
-      {
-          if (_roadVariants[i] != null)
-          {
-              _roadVariants[i].SetActive(i == index);
-          }
-      }
+        public RoadsService.RoadType RoadType;
+        public GameObject RoadObject;
     }
 }

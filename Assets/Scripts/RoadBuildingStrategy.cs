@@ -63,14 +63,11 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
 
         if (toggle)
         {
-           
+            return;
         }
-        else
-        {
-
-            var lastKnownTile = _tileInputService.LastRayCastTile;
-            OnCompletedBuild?.Invoke(lastKnownTile);
-        }
+        
+        var lastKnownTile = _tileInputService.LastRayCastTile;
+        OnCompletedBuild?.Invoke(lastKnownTile);
     }
 
     public void BuildingTileCheck(WorldTileView view)
@@ -135,7 +132,8 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
         _selectedBuilding.View.transform.position = tile.BuildingHolder.position;
         tile.SetBuilding(_selectedBuilding);
         tile.SetState(TileState.Occupied);
-        
+        _roadsService.RegisterRoad(_selectedBuilding, tile);
+
         _selectedBuilding = null;
         _isBuildingSelected = false;
         return true;

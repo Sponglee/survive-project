@@ -78,7 +78,7 @@ public class WorldGenerator : IInitializable
                 if (!hasTile)
                     continue;
                 
-                var coords = new Vector2(x, y);
+                var coords = new Vector2Int(x, y);
                 var pos = GetSpawnPosition(x, y, _worldPreset.TileSize);
                 var tileView = _tileFactory.Create(tilePrefab);
                 tileView.transform.position = pos;

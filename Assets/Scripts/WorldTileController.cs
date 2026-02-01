@@ -20,7 +20,7 @@ namespace SurviveProject
         public TileState TileState => _model.TileState;
         public bool IsEmpty => TileState == TileState.Free;
         public bool HasContent => _model.MapContent != null;
-        public Vector2 Coords => _model.Coords;
+        public Vector2Int Coords => _model.Coords;
         
         public WorldTileController(
             WorldTileModel model, 

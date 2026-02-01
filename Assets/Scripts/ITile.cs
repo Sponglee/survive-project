@@ -9,7 +9,7 @@ public interface ITile
     TileState TileState { get; }
     bool IsEmpty { get; }
     bool HasContent { get; }
-    public Vector2 Coords { get; }
+    public Vector2Int Coords { get; }
 
     public MapContentType MapContentType { get; }
     void SetState(TileState state);
