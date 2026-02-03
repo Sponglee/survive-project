@@ -52,7 +52,7 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
     public void Dispose()
     {
         _selectedBuilding?.Dispose();
-        
+        _buildingService.ToggleBuildingIndicator(false);
         _tileInputService.OnClickActionHold -= ActionHoldHandler;
 
     }
@@ -60,6 +60,7 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
     private void ActionHoldHandler(bool toggle)
     {
         _isBuildActionPressed = toggle;
+        SetPlacementValid(false);
 
         if (toggle)
         {
@@ -67,10 +68,32 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
         }
         
         var lastKnownTile = _tileInputService.LastRayCastTile;
+        
+        var canBuild = CanPlaceBuilding(lastKnownTile);
+
+        if (!canBuild)
+        {
+            return;
+        }
+        
+        _selectedBuilding.View.transform.position = lastKnownTile.BuildingHolder.position;
+            
         OnCompletedBuild?.Invoke(lastKnownTile);
     }
 
     public void BuildingTileCheck(WorldTileView view)
+    {
+        var canBuild = CanPlaceBuilding(view);
+        if (!canBuild)
+        {
+            return;
+        }
+
+        SetPlacementValid(canBuild);
+        OnCompletedBuild?.Invoke(view);
+    }
+
+    public bool CanPlaceBuilding(WorldTileView view)
     {
         if (!_isBuildingSelected)
         {
@@ -80,34 +103,15 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
         if (view == null)
         {
             _selectedBuilding.View.transform.position = new Vector3(0,-100,0);
-            return;
+            return false;
         }
         
         var tile = _tileManager.GetTileByView(view);
 
-        if (tile == null)
-        {
-            return;
-        }
-        
-        if (!tile.IsEmpty)
-        {
-            return;
-        }
-
-        if (tile.HasContent)
-        {
-            return;
-        }
-
-        if (_isBuildActionPressed)
-        {
-            _selectedBuilding.View.transform.position = view.BuildingHolder.position;
-            
-            SetPlacementValid(tile.IsEmpty);
-
-            OnCompletedBuild?.Invoke(view);
-        }
+        SetPlacementValid(true);
+        _selectedBuilding.View.transform.position = view.BuildingHolder.position;
+      
+        return tile != null && tile.IsEmpty && !tile.HasContent && _isBuildActionPressed;
     }
 
     public void BuildingTileClick(WorldTileView obj) { }
@@ -161,7 +165,7 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
 
     public void SetPlacementValid(bool valid)
     {
-        _selectedBuilding.View.SetIsBuildable(valid);
+        _selectedBuilding?.View.SetIsBuildable(valid);
     }
 
     private BuildingController InitBuildingTile(BuildingData targetBuildingData)

@@ -36,6 +36,8 @@ public class TileManager
 
     public ITile GetTileByCoord(Vector2 tileToCheckCoord)
     {
-        return ActiveTiles[tileToCheckCoord];
+        ActiveTiles.TryGetValue(tileToCheckCoord, out var tile);
+        
+        return tile;
     }
 }

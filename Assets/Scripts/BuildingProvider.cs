@@ -90,6 +90,13 @@ namespace SurviveProject
         
         private void BuildingSelectedHandler(BuildingData data)
         {
+            if (_buildingService.IsBuildingInProgress)
+            {
+                _buildingService.CancelBuild();
+                BuildingCancelledHandler();
+            }
+
+            
             _tileInputService.SelectTile(null);
             _buildingService.StartBuild(data);
             ToggleCameraZoomLock(true);

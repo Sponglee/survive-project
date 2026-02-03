@@ -77,32 +77,54 @@ public class SimpleBuildingStrategy : IBuildingStrategy, IDisposable
         
         SetPlacementValid(true);
     }
-
+    
     public void BuildingTileClick(WorldTileView obj)
     {
-        if (!_isBuildingSelected || obj == null)
-        {
-            return;
-        }
-                
-        var tile = _tileManager.GetTileByView(obj);
+        var canBuild = CanPlaceBuilding(obj);
 
-        if (tile == null)
-        {
-            return;
-        }
-
-        if (!tile.IsEmpty)
-        {
-            return;
-        }
-        
-        if (tile.HasContent)
+        if (!canBuild)
         {
             return;
         }
         
         OnCompletedBuild?.Invoke(obj);
+    }
+    
+    public bool CanPlaceBuilding(WorldTileView view)
+    {
+        if (!_isBuildingSelected && view == null)
+        {
+            return false;
+        }
+        
+        if (view == null)
+        {
+            _selectedBuilding.View.transform.position = new Vector3(0,-100,0);
+            return false;
+        }
+     
+        var tile = _tileManager.GetTileByView(view);
+        _selectedBuilding.View.transform.position = view.BuildingHolder.position;
+        
+        if (tile == null)
+        {
+            return false;
+        }
+
+        if (!tile.IsEmpty)
+        {
+            return false;
+        }
+
+        if (tile.HasContent)
+        {
+            return false;
+        }
+        
+        SetPlacementValid(true);
+        _selectedBuilding.View.transform.position = view.BuildingHolder.position;
+
+        return true;
     }
 
     public bool TryCompleteBuilding(WorldTileView obj)

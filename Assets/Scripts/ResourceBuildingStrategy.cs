@@ -83,29 +83,24 @@ public class ResourceBuildingStrategy : IBuildingStrategy, IDisposable
 
     public void BuildingTileClick(WorldTileView obj)
     {
-        if (!_isBuildingSelected || obj == null)
-        {
-            return;
-        }
-                
-        var tile = _tileManager.GetTileByView(obj);
-        
-        if (tile == null)
-        {
-            return;
-        }
-
-        if (!tile.IsEmpty)
-        {
-            return;
-        }
-
-        if (!tile.HasContent || tile.MapContentType != MapContentType.Resource)
+        if (!CanPlaceBuilding(obj))
         {
             return;
         }
         
         OnCompletedBuild?.Invoke(obj);
+    }
+    
+    public bool CanPlaceBuilding(WorldTileView obj)
+    {
+        if (!_isBuildingSelected || obj == null)
+        {
+            return false;
+        }
+                
+        var tile = _tileManager.GetTileByView(obj);
+
+        return tile != null && tile.IsEmpty && tile.HasContent && tile.MapContentType == MapContentType.Resource;
     }
     
     public bool TryCompleteBuilding(WorldTileView obj)
