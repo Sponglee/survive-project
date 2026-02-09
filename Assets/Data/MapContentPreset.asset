@@ -15,3 +15,5 @@ MonoBehaviour:
   MapContentList:
   - Type: 0
     Prefab: {fileID: 1159172964186833925, guid: 80632c776e345a24bbb477675a858d88, type: 3}
+  - Type: 0
+    Prefab: {fileID: 1159172964186833925, guid: 80632c776e345a24bbb477675a858d88, type: 3}

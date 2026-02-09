@@ -5,15 +5,17 @@ using UnityEngine;
 public class TileManager
 {
     public Dictionary<Vector2, ITile> ActiveTiles { get; } = new Dictionary<Vector2, ITile>();
+    public Dictionary<Vector2, WorldTileView> TileViews { get; } = new Dictionary<Vector2, WorldTileView>();
     
     public TileManager()
     {
         
     }
     
-    public void AddTile(Vector2 coords, ITile tile)
+    public void AddTile(Vector2 coords, ITile tile, WorldTileView view)
     {
         ActiveTiles.Add(coords, tile);
+        TileViews.Add(coords, view);
     }
 
     private TileState GetTileDataFromMapContent(MapContentType objectDataType)
@@ -39,5 +41,12 @@ public class TileManager
         ActiveTiles.TryGetValue(tileToCheckCoord, out var tile);
         
         return tile;
+    }
+    
+    public WorldTileView GetViewByCoord(Vector2 tileToCheckCoord)
+    {
+        TileViews.TryGetValue(tileToCheckCoord, out var view);
+        
+        return view;
     }
 }

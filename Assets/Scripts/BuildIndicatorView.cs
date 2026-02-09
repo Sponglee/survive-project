@@ -10,7 +10,7 @@ namespace SurviveProject
 
         public void ToggleIndicator(bool isIndicatorActive)
         {
-           buildingIndicatorPanel.gameObject.SetActive(isIndicatorActive);
+           buildingIndicatorPanel?.gameObject?.SetActive(isIndicatorActive);
         }
     }
 }

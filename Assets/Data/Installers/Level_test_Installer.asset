@@ -16,3 +16,4 @@ MonoBehaviour:
   _playerPreset: {fileID: 11400000, guid: e89b0fdde9ce84ceba65bce41764cca3, type: 2}
   _mapContentPreset: {fileID: 11400000, guid: f53742a34e21ec646bb754fdb5ebba5e, type: 2}
   _buildingsPreset: {fileID: 11400000, guid: 2b6674b8cabef6343baa5fe7ad0ef6d1, type: 2}
+  _roadsPreset: {fileID: 11400000, guid: a68cda0baf930ff4c81d05619a087275, type: 2}

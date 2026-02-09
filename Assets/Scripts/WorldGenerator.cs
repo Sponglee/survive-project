@@ -88,7 +88,7 @@ public class WorldGenerator : IInitializable
                 var tileModel = new WorldTileModel(tileId, coords);
                 var tile = new WorldTileController(tileModel, tileView, _tileInputService);
                 
-                _tileManager.AddTile(coords, tile);
+                _tileManager.AddTile(coords, tile, tileView);
                 tileId++;
             }
         }

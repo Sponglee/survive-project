@@ -8,6 +8,7 @@ public class LevelDataInstaller : ScriptableObjectInstaller
     public PlayerPreset _playerPreset;
     public MapContentPreset _mapContentPreset;
     public BuildingsPreset _buildingsPreset;
+    public RoadsPreset _roadsPreset;
     
     public override void InstallBindings()
     {
@@ -15,5 +16,6 @@ public class LevelDataInstaller : ScriptableObjectInstaller
         Container.Bind<PlayerPreset>().FromInstance(_playerPreset).AsSingle();
         Container.Bind<MapContentPreset>().FromInstance(_mapContentPreset).AsSingle();
         Container.Bind<BuildingsPreset>().FromInstance(_buildingsPreset).AsSingle();
+        Container.Bind<RoadsPreset>().FromInstance(_roadsPreset).AsSingle();
     }
 }
