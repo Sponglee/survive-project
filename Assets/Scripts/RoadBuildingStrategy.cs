@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SurviveProject;
 using UnityEngine;
 
@@ -15,10 +14,6 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
     private BuildingData _buildingData;
     private bool _isBuildActionPressed = false;
     private WorldTileView _lastProcessedTile;
-    
-    // Preview only
-    private List<BuildingController> _previewRoadControllers = new List<BuildingController>();
-    private List<RoadElementView> _previewRoadElements = new List<RoadElementView>();
     
     public RoadBuildingStrategy(
         TileManager tileManager,
@@ -53,7 +48,6 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
     
     public void Dispose()
     {
-        ClearAllPreview();
         _buildingService.ToggleBuildingIndicator(false);
         _tileInputService.OnClickActionHold -= ActionHoldHandler;
     }
@@ -64,10 +58,11 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
         
         if (!isPressed)
         {
-            // Finalize on release
-            FinalizePreview();
             _lastProcessedTile = null;
+            return;
         }
+
+        BuildingTileCheck(_tileInputService.LastRayCastTile);
     }
 
     public void BuildingTileCheck(WorldTileView view)
@@ -76,42 +71,48 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
         {
             return;
         }
-        
-        // Skip if same tile
+
+        TryBuildRoadAt(view);
+    }
+
+    private void TryBuildRoadAt(WorldTileView view)
+    {
         if (view == _lastProcessedTile)
         {
             return;
         }
-        
-        // Check if can place
+
+        if (_lastProcessedTile != null && !AreAdjacent(_lastProcessedTile.TileCoords, view.TileCoords))
+        {
+            return;
+        }
+
         if (!CanPlaceRoadOn(view))
         {
             return;
         }
-        
-        // Check adjacency if we have a previous tile
+
+        var roadCreated = EnsureRoadTile(view);
+        if (!roadCreated && !_roadsService.HasRoadAt(view.TileCoords))
+        {
+            return;
+        }
+
         if (_lastProcessedTile != null)
         {
-            if (!AreAdjacent(_lastProcessedTile.TileCoords, view.TileCoords))
-            {
-                return;
-            }
+            CreateRoadConnection(_lastProcessedTile.TileCoords, view.TileCoords);
         }
-        
-        // Create preview road tile
-        CreatePreviewRoadTile(view);
-        
-        // Create preview connection if we have a previous tile
-        if (_lastProcessedTile != null)
-        {
-            CreatePreviewConnection(_lastProcessedTile, view);
-        }
-        
+
         _lastProcessedTile = view;
     }
 
     private bool CanPlaceRoadOn(WorldTileView view)
     {
+        if (view == null)
+        {
+            return false;
+        }
+
         var tile = _tileManager.GetTileByView(view);
         if (tile == null)
         {
@@ -129,186 +130,51 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
         return (dx <= 1 && dy <= 1) && !(dx == 0 && dy == 0);
     }
 
-    private void CreatePreviewRoadTile(WorldTileView view)
+    private bool EnsureRoadTile(WorldTileView view)
     {
         var coords = view.TileCoords;
-        
-        // Skip if road already exists (either finalized or preview)
+
         if (_roadsService.HasRoadAt(coords))
         {
-            return;
+            return false;
         }
-        
-        // Check if we already created a preview for this tile
-        foreach (var controller in _previewRoadControllers)
+
+        var tile = _tileManager.GetTileByView(view);
+        if (tile == null || !tile.IsEmpty || tile.HasContent)
         {
-            if (controller.View.transform.position == view.BuildingHolder.position)
-            {
-                return;
-            }
+            return false;
         }
-        
-        // Create preview road
+
         var buildingModel = new BuildingModel(_buildingData);
         var buildingView = _buildingFactory.CreateView(_buildingData.Prefab);
         var roadController = new BuildingController(buildingView, buildingModel);
-        
-        roadController.View.transform.position = view.BuildingHolder.position;
+
+        roadController.View.transform.SetParent(tile.BuildingHolder);
+        roadController.View.transform.position = tile.BuildingHolder.position;
         roadController.View.SetIsBuildable(true);
-        
-        _previewRoadControllers.Add(roadController);
+
+        tile.SetBuilding(roadController);
+        tile.SetState(TileState.Occupied);
+
+        _roadsService.RegisterRoadTile(roadController, tile);
+        OnCompletedBuild?.Invoke(view);
+        return true;
     }
 
-    private void CreatePreviewConnection(WorldTileView tileA, WorldTileView tileB)
+    private void CreateRoadConnection(Vector2Int coordsA, Vector2Int coordsB)
     {
-        var roadTileA = _roadsService.GetRoadTile(tileA.TileCoords);
-        var roadTileB = _roadsService.GetRoadTile(tileB.TileCoords);
-        
-        Transform connectionPointA = null;
-        Transform connectionPointB = null;
-        
-        // Get connection point A
-        if (roadTileA != null)
-        {
-            connectionPointA = roadTileA.GetConnectionPoint();
-        }
-        else
-        {
-            // Use preview
-            var roadView = GetPreviewRoadView(tileA.BuildingHolder.position);
-            connectionPointA = (roadView as RoadView)?.RoadConnectionPoint;
-        }
-        
-        // Get connection point B
-        if (roadTileB != null)
-        {
-            connectionPointB = roadTileB.GetConnectionPoint();
-        }
-        else
-        {
-            var roadView = GetPreviewRoadView(tileB.BuildingHolder.position);
-            connectionPointB = (roadView as RoadView)?.RoadConnectionPoint;
-        }
-        
-        if (connectionPointA == null || connectionPointB == null)
-        {
-            return;
-        }
-        
-        // Get prefab
         if (_roadsPreset.RoadsList == null || _roadsPreset.RoadsList.Count == 0)
         {
             return;
         }
-        
+
         var roadElementPrefab = _roadsPreset.RoadsList[0].RoadElementPrefab;
         if (roadElementPrefab == null)
         {
             return;
         }
-        
-        // Spawn preview connection
-        var roadElementObj = GameObject.Instantiate(roadElementPrefab);
-        var roadElement = roadElementObj.GetComponent<RoadElementView>();
-        
-        if (roadElement == null)
-        {
-            GameObject.Destroy(roadElementObj);
-            return;
-        }
-        
-        roadElementObj.transform.SetParent(connectionPointA);
-        roadElementObj.transform.localPosition = Vector3.zero;
-        roadElementObj.transform.localRotation = Quaternion.identity;
-        roadElementObj.transform.localScale = Vector3.one;
-        
-        roadElement.SetConnectionPoints(connectionPointA.position, connectionPointB.position);
-        
-        _previewRoadElements.Add(roadElement);
-    }
 
-    private BuildingView GetPreviewRoadView(Vector3 position)
-    {
-        foreach (var controller in _previewRoadControllers)
-        {
-            if (controller.View.transform.position == position)
-            {
-                return controller.View;
-            }
-        }
-        return null;
-    }
-
-    private void FinalizePreview()
-    {
-        // Finalize all preview road tiles
-        foreach (var controller in _previewRoadControllers)
-        {
-            var view = _tileManager.GetViewByCoord(GetCoordsFromPosition(controller.View.transform.position));
-            if (view == null) continue;
-            
-            var tile = _tileManager.GetTileByView(view);
-            if (tile == null || (!tile.IsEmpty || tile.HasContent)) continue;
-            
-            // Finalize tile
-            controller.View.transform.SetParent(tile.BuildingHolder);
-            controller.View.transform.position = tile.BuildingHolder.position;
-            tile.SetBuilding(controller);
-            tile.SetState(TileState.Occupied);
-            
-            _roadsService.RegisterRoadTile(controller, tile);
-            OnCompletedBuild?.Invoke(view);
-        }
-        
-        // Finalize connections - create them in RoadsService
-        // (Preview connections are just visual, now create real ones)
-        for (int i = 0; i < _previewRoadControllers.Count - 1; i++)
-        {
-            var posA = _previewRoadControllers[i].View.transform.position;
-            var posB = _previewRoadControllers[i + 1].View.transform.position;
-            
-            var coordsA = GetCoordsFromPosition(posA);
-            var coordsB = GetCoordsFromPosition(posB);
-            
-            if (_roadsPreset.RoadsList != null && _roadsPreset.RoadsList.Count > 0)
-            {
-                _roadsService.CreateConnection(coordsA, coordsB, _roadsPreset.RoadsList[0].RoadElementPrefab);
-            }
-        }
-        
-        ClearAllPreview();
-    }
-
-    private Vector2Int GetCoordsFromPosition(Vector3 position)
-    {
-        // Find the tile at this position
-        foreach (var kvp in _tileManager.ActiveTiles)
-        {
-            var view = _tileManager.GetViewByCoord(kvp.Key);
-            if (view != null && view.BuildingHolder.position == position)
-            {
-                // Convert Vector2 to Vector2Int
-                return new Vector2Int((int)kvp.Key.x, (int)kvp.Key.y);
-            }
-        }
-        return Vector2Int.zero;
-    }
-
-    private void ClearAllPreview()
-    {
-        // Destroy preview road elements
-        foreach (var element in _previewRoadElements)
-        {
-            if (element != null)
-            {
-                GameObject.Destroy(element.gameObject);
-            }
-        }
-        _previewRoadElements.Clear();
-        
-        // Don't dispose preview controllers if they're finalized
-        // Only clear the list
-        _previewRoadControllers.Clear();
+        _roadsService.CreateConnection(coordsA, coordsB, roadElementPrefab);
     }
 
     public bool CanPlaceBuilding(WorldTileView view) => CanPlaceRoadOn(view);
@@ -318,14 +184,6 @@ public class RoadBuildingStrategy : IBuildingStrategy, IDisposable
     public void CancelBuild()
     {
         _buildingService.ToggleBuildingIndicator(false);
-        
-        // Dispose preview controllers since we're canceling
-        foreach (var controller in _previewRoadControllers)
-        {
-            controller.Dispose();
-        }
-        
-        ClearAllPreview();
         _isBuildActionPressed = false;
         _lastProcessedTile = null;
     }
